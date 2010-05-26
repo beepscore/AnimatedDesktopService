@@ -21,7 +21,7 @@
 		01B050F41199B66A009DE4F0 /* ImageEditViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 01B050F31199B66A009DE4F0 /* ImageEditViewController.m */; };
 		01B051061199B6D9009DE4F0 /* ImageBrowseViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 01B051051199B6D9009DE4F0 /* ImageBrowseViewController.m */; };
 		1DDD58160DA1D0A300B32029 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1DDD58140DA1D0A300B32029 /* MainMenu.xib */; };
-		256AC3DA0F4B6AC300CF3369 /* DesktopServiceAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 256AC3D90F4B6AC300CF3369 /* DesktopServiceAppDelegate.m */; };
+		256AC3DA0F4B6AC300CF3369 /* AnimatedDesktopServiceAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 256AC3D90F4B6AC300CF3369 /* AnimatedDesktopServiceAppDelegate.m */; };
 		8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165CFE840E0CC02AAC07 /* InfoPlist.strings */; };
 		8D11072D0486CEB800E47090 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
@@ -51,14 +51,14 @@
 		1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
 		13E42FB307B3F0F600E4EEF1 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = /System/Library/Frameworks/CoreData.framework; sourceTree = "<absolute>"; };
 		1DDD58150DA1D0A300B32029 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/MainMenu.xib; sourceTree = "<group>"; };
-		256AC3D80F4B6AC300CF3369 /* DesktopServiceAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DesktopServiceAppDelegate.h; sourceTree = "<group>"; };
-		256AC3D90F4B6AC300CF3369 /* DesktopServiceAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DesktopServiceAppDelegate.m; sourceTree = "<group>"; };
-		256AC3F00F4B6AF500CF3369 /* DesktopService_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DesktopService_Prefix.pch; sourceTree = "<group>"; };
+		256AC3D80F4B6AC300CF3369 /* AnimatedDesktopServiceAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AnimatedDesktopServiceAppDelegate.h; sourceTree = "<group>"; };
+		256AC3D90F4B6AC300CF3369 /* AnimatedDesktopServiceAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AnimatedDesktopServiceAppDelegate.m; sourceTree = "<group>"; };
+		256AC3F00F4B6AF500CF3369 /* AnimatedDesktopService_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AnimatedDesktopService_Prefix.pch; sourceTree = "<group>"; };
 		29B97316FDCFA39411CA2CEA /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		29B97324FDCFA39411CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
-		8D1107310486CEB800E47090 /* DesktopService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "DesktopService-Info.plist"; sourceTree = "<group>"; };
-		8D1107320486CEB800E47090 /* DesktopService.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DesktopService.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		8D1107310486CEB800E47090 /* AnimatedDesktopService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "AnimatedDesktopService-Info.plist"; sourceTree = "<group>"; };
+		8D1107320486CEB800E47090 /* AnimatedDesktopService.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AnimatedDesktopService.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		DE9B203311ACFDE0003C9EFE /* README */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -81,8 +81,8 @@
 			children = (
 				018C92B111559ABF003349E5 /* ApplicationController.h */,
 				018C92B211559ABF003349E5 /* ApplicationController.m */,
-				256AC3D80F4B6AC300CF3369 /* DesktopServiceAppDelegate.h */,
-				256AC3D90F4B6AC300CF3369 /* DesktopServiceAppDelegate.m */,
+				256AC3D80F4B6AC300CF3369 /* AnimatedDesktopServiceAppDelegate.h */,
+				256AC3D90F4B6AC300CF3369 /* AnimatedDesktopServiceAppDelegate.m */,
 				018C928A1155977C003349E5 /* ImageShareService.h */,
 				018C928B1155977C003349E5 /* ImageShareService.m */,
 				0170BC9A11965F4B00069E79 /* FilePathImageObject.h */,
@@ -118,7 +118,7 @@
 		19C28FACFE9D520D11CA2CBB /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				8D1107320486CEB800E47090 /* DesktopService.app */,
+				8D1107320486CEB800E47090 /* AnimatedDesktopService.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -138,7 +138,7 @@
 		29B97315FDCFA39411CA2CEA /* Other Sources */ = {
 			isa = PBXGroup;
 			children = (
-				256AC3F00F4B6AF500CF3369 /* DesktopService_Prefix.pch */,
+				256AC3F00F4B6AF500CF3369 /* AnimatedDesktopService_Prefix.pch */,
 				29B97316FDCFA39411CA2CEA /* main.m */,
 			);
 			name = "Other Sources";
@@ -152,7 +152,7 @@
 				011AB02811A8759200BBB071 /* TB_crop.png */,
 				011AB02911A8759200BBB071 /* TB_grab.png */,
 				011AB02A11A8759200BBB071 /* TB_rotate_right.png */,
-				8D1107310486CEB800E47090 /* DesktopService-Info.plist */,
+				8D1107310486CEB800E47090 /* AnimatedDesktopService-Info.plist */,
 				089C165CFE840E0CC02AAC07 /* InfoPlist.strings */,
 				011AB02411A8741700BBB071 /* ImageEditingView.xib */,
 				011AAFF511A86E7400BBB071 /* ImageBrowsingView.xib */,
@@ -173,9 +173,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		8D1107260486CEB800E47090 /* DesktopService */ = {
+		8D1107260486CEB800E47090 /* AnimatedDesktopService */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = C01FCF4A08A954540054247B /* Build configuration list for PBXNativeTarget "DesktopService" */;
+			buildConfigurationList = C01FCF4A08A954540054247B /* Build configuration list for PBXNativeTarget "AnimatedDesktopService" */;
 			buildPhases = (
 				8D1107290486CEB800E47090 /* Resources */,
 				8D11072C0486CEB800E47090 /* Sources */,
@@ -185,10 +185,10 @@
 			);
 			dependencies = (
 			);
-			name = DesktopService;
+			name = AnimatedDesktopService;
 			productInstallPath = "$(HOME)/Applications";
 			productName = DesktopService;
-			productReference = 8D1107320486CEB800E47090 /* DesktopService.app */;
+			productReference = 8D1107320486CEB800E47090 /* AnimatedDesktopService.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -196,14 +196,14 @@
 /* Begin PBXProject section */
 		29B97313FDCFA39411CA2CEA /* Project object */ = {
 			isa = PBXProject;
-			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "DesktopService" */;
+			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "AnimatedDesktopService" */;
 			compatibilityVersion = "Xcode 3.1";
 			hasScannedForEncodings = 1;
 			mainGroup = 29B97314FDCFA39411CA2CEA /* DesktopService */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				8D1107260486CEB800E47090 /* DesktopService */,
+				8D1107260486CEB800E47090 /* AnimatedDesktopService */,
 			);
 		};
 /* End PBXProject section */
@@ -233,7 +233,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				8D11072D0486CEB800E47090 /* main.m in Sources */,
-				256AC3DA0F4B6AC300CF3369 /* DesktopServiceAppDelegate.m in Sources */,
+				256AC3DA0F4B6AC300CF3369 /* AnimatedDesktopServiceAppDelegate.m in Sources */,
 				018C928C1155977C003349E5 /* ImageShareService.m in Sources */,
 				018C92B311559ABF003349E5 /* ApplicationController.m in Sources */,
 				0170BC9C11965F4B00069E79 /* FilePathImageObject.m in Sources */,
@@ -282,10 +282,10 @@
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = DesktopService_Prefix.pch;
-				INFOPLIST_FILE = "DesktopService-Info.plist";
+				GCC_PREFIX_HEADER = AnimatedDesktopService_Prefix.pch;
+				INFOPLIST_FILE = "AnimatedDesktopService-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
-				PRODUCT_NAME = DesktopService;
+				PRODUCT_NAME = AnimatedDesktopService;
 			};
 			name = Debug;
 		};
@@ -296,10 +296,10 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = DesktopService_Prefix.pch;
-				INFOPLIST_FILE = "DesktopService-Info.plist";
+				GCC_PREFIX_HEADER = AnimatedDesktopService_Prefix.pch;
+				INFOPLIST_FILE = "AnimatedDesktopService-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
-				PRODUCT_NAME = DesktopService;
+				PRODUCT_NAME = AnimatedDesktopService;
 			};
 			name = Release;
 		};
@@ -332,7 +332,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		C01FCF4A08A954540054247B /* Build configuration list for PBXNativeTarget "DesktopService" */ = {
+		C01FCF4A08A954540054247B /* Build configuration list for PBXNativeTarget "AnimatedDesktopService" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C01FCF4B08A954540054247B /* Debug */,
@@ -341,7 +341,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		C01FCF4E08A954540054247B /* Build configuration list for PBXProject "DesktopService" */ = {
+		C01FCF4E08A954540054247B /* Build configuration list for PBXProject "AnimatedDesktopService" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C01FCF4F08A954540054247B /* Debug */,
