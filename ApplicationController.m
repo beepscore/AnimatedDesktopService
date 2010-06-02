@@ -117,11 +117,11 @@ static ApplicationController*		sharedApplicationController = nil;
 	// Go ahead and create both of our view controllers
 	// In some situations you might do this on demand to control memory use for instance
 	imageBrowseController_ = [[ImageBrowseViewController alloc] initWithNibName:@"ImageBrowsingView" bundle:nil];
-
+    
 	imageEditController_ = [[ImageEditViewController alloc] initWithNibName:@"ImageEditingView" bundle:nil];
 	
 	
-	// HW_TODO : 
+	// TODO: HW_TODO : 
 	// Set up a Core Image filter to use for transitions between log and status view
 	// Do this here so we only create the filter once and reuse it
 	// You can create it on demand right before you use it as well
@@ -213,19 +213,19 @@ static ApplicationController*		sharedApplicationController = nil;
 {
 	// Size the log view to match the status area
 	// the size of the status area may have changed since the last
-	// time this view was in the status area
-	
+	// time this view was in the status area	
 	NSRect statusBounds = [statusView_ bounds];
 	[logView_ setFrame:statusBounds];
+    
 	
-	//HW_TODO :
+	// TODO: HW_TODO :
 	
 	// CREATE THE CATransition ANIMATION
 	
 	// SET ANY PARAMETERS ON IT ( TIMING FUNCTION, DURATION
 	
 	// SET THE FILTER FOR THE CATransition TO THE CIFilter YOU WANT TO USE
-
+    
 	// CREATE A DICTIONARY WITH KEY PAIRS. 
 	// KEY == ANIMATION ACITON  ("subviews")
 	// VALUE == THE CATransition ANIMATION YOU WANT TO USE
@@ -248,15 +248,15 @@ static ApplicationController*		sharedApplicationController = nil;
 {
 	// Size the sending view to match the status area
 	// the size of the status area may have changed since the last
-	// time this view was in the status area
-	
+	// time this view was in the status area	
 	NSRect statusBounds = [statusView_ bounds];
 	[sendingView_ setFrame:statusBounds];
-
-	// HW_TODO :
+    
+    
+	// TODO: HW_TODO :
 	
 	// CREATE THE CATransition ANIMATION
-
+    
 	// SET ANY PARAMETERS ON IT ( TIMING FUNCTION, DURATION
 	
 	// SET THE FILTER FOR THE CATransition TO THE CIFilter YOU WANT TO USE
@@ -275,7 +275,7 @@ static ApplicationController*		sharedApplicationController = nil;
 	
 	// ADD THE ANIMATION DICTONARY TO THE VIEW THAT WILL HAVE ITS SUBVIEWS EXCHANGED
 	// THIS VIEW IS statusView_ AND THE METHOD IS setAnimations:	
-
+    
 	// finally, swap the subviews. This will animate as long as the 
 	// "subviews" key has an associated animation
 	
@@ -288,11 +288,18 @@ static ApplicationController*		sharedApplicationController = nil;
 	//        ANIMATION animationDidStop:finished: WILL BE CALLED WHICH DOES THE SAME
 	//        THING AS THE BLOCK HERE
 	
-	[CATransaction begin]; // REMOVE THIS LINE WHEN YOU HAVE YOUR ANIMATION ADDED WITH self AS THE DELEGATE
-	[CATransaction setCompletionBlock:^(void){[self beginSendingImage:[imageBrowseController_ selectedImage]];}]; // REMOVE THIS LINE TOO
-	[[statusView_ animator] replaceSubview:logView_ with:sendingView_];		
-	[CATransaction commit]; // AND REMOVE THIS LINE
+    
+     // REMOVE THIS LINE WHEN YOU HAVE YOUR ANIMATION ADDED WITH self AS THE DELEGATE
+	[CATransaction begin];
+    // REMOVE THIS LINE TOO
+	[CATransaction setCompletionBlock:^(void){[self beginSendingImage:[imageBrowseController_ selectedImage]];}];     
+    
+	// ????: SB- keep this line?
+    [[statusView_ animator] replaceSubview:logView_ with:sendingView_];		
 
+    // AND REMOVE THIS LINE
+    [CATransaction commit];
+    
 }
 
 - (void)animationDidStop:(CAAnimation *)anim finished:(BOOL)flag
@@ -308,7 +315,9 @@ static ApplicationController*		sharedApplicationController = nil;
 	// ( I honestly do not know for sure why its called twice. I suspect
 	//   its related to how the implicit animation we are replacing works )
 	if ( flag )
-		[self beginSendingImage:[imageBrowseController_ selectedImage]];
+    {
+		[self beginSendingImage:[imageBrowseController_ selectedImage]];        
+    }
 }
 
 
@@ -344,7 +353,7 @@ static ApplicationController*		sharedApplicationController = nil;
 	[self presentContentViewController:imageEditController_];
 	[imageEditController_.imageView setImageWithURL:imagePathURL];
 	[imageEditController_.imageView zoomImageToFit: self];
-
+    
 }
 
 - (void) presentBrowsingView
