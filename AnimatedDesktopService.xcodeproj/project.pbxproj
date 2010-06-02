@@ -25,6 +25,9 @@
 		8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165CFE840E0CC02AAC07 /* InfoPlist.strings */; };
 		8D11072D0486CEB800E47090 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
+		DE5BC43D11B646FF00003A74 /* baileySit100514.jpg in Resources */ = {isa = PBXBuildFile; fileRef = DE5BC43C11B646FF00003A74 /* baileySit100514.jpg */; };
+		DE5BC43F11B6471000003A74 /* russianRocket.png in Resources */ = {isa = PBXBuildFile; fileRef = DE5BC43E11B6471000003A74 /* russianRocket.png */; };
+		DE5BC44111B6472100003A74 /* predict.gif in Resources */ = {isa = PBXBuildFile; fileRef = DE5BC44011B6472100003A74 /* predict.gif */; };
 		DE9B203411ACFDE0003C9EFE /* README in Resources */ = {isa = PBXBuildFile; fileRef = DE9B203311ACFDE0003C9EFE /* README */; };
 /* End PBXBuildFile section */
 
@@ -59,6 +62,9 @@
 		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		8D1107310486CEB800E47090 /* AnimatedDesktopService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "AnimatedDesktopService-Info.plist"; sourceTree = "<group>"; };
 		8D1107320486CEB800E47090 /* AnimatedDesktopService.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AnimatedDesktopService.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		DE5BC43C11B646FF00003A74 /* baileySit100514.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = baileySit100514.jpg; sourceTree = "<group>"; };
+		DE5BC43E11B6471000003A74 /* russianRocket.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = russianRocket.png; sourceTree = "<group>"; };
+		DE5BC44011B6472100003A74 /* predict.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = predict.gif; sourceTree = "<group>"; };
 		DE9B203311ACFDE0003C9EFE /* README */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -147,16 +153,19 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				8D1107310486CEB800E47090 /* AnimatedDesktopService-Info.plist */,
+				DE5BC43C11B646FF00003A74 /* baileySit100514.jpg */,
+				011AAFF511A86E7400BBB071 /* ImageBrowsingView.xib */,
+				011AB02411A8741700BBB071 /* ImageEditingView.xib */,
+				089C165CFE840E0CC02AAC07 /* InfoPlist.strings */,
+				1DDD58140DA1D0A300B32029 /* MainMenu.xib */,
+				DE5BC44011B6472100003A74 /* predict.gif */,
+				DE5BC43E11B6471000003A74 /* russianRocket.png */,
 				DE9B203311ACFDE0003C9EFE /* README */,
 				011AB6DD11A9AFB900BBB071 /* restrictedshine.tiff */,
 				011AB02811A8759200BBB071 /* TB_crop.png */,
 				011AB02911A8759200BBB071 /* TB_grab.png */,
 				011AB02A11A8759200BBB071 /* TB_rotate_right.png */,
-				8D1107310486CEB800E47090 /* AnimatedDesktopService-Info.plist */,
-				089C165CFE840E0CC02AAC07 /* InfoPlist.strings */,
-				011AB02411A8741700BBB071 /* ImageEditingView.xib */,
-				011AAFF511A86E7400BBB071 /* ImageBrowsingView.xib */,
-				1DDD58140DA1D0A300B32029 /* MainMenu.xib */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -222,6 +231,9 @@
 				011AB02D11A8759200BBB071 /* TB_rotate_right.png in Resources */,
 				011AB6DE11A9AFB900BBB071 /* restrictedshine.tiff in Resources */,
 				DE9B203411ACFDE0003C9EFE /* README in Resources */,
+				DE5BC43D11B646FF00003A74 /* baileySit100514.jpg in Resources */,
+				DE5BC43F11B6471000003A74 /* russianRocket.png in Resources */,
+				DE5BC44111B6472100003A74 /* predict.gif in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

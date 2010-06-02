@@ -80,7 +80,7 @@ static ApplicationController*		sharedApplicationController = nil;
 	
 	[transitionFilter_ release];
 	transitionFilter_ = nil;
-	
+
 	[super dealloc];
 }
 
@@ -124,25 +124,39 @@ static ApplicationController*		sharedApplicationController = nil;
 	// TODO: HW_TODO : 
 	// Set up a Core Image filter to use for transitions between log and status view
 	// Do this here so we only create the filter once and reuse it
-	// You can create it on demand right before you use it as well
-	
-	// REMEMBER : CATransition ANIMATIONS REQUIRE A CORE IMAGE FILTER WITH THE FOLLOWING PARAMETERS:
+	// You can create it on demand right before you use it as well (SB- instead)
+    
+    // CREATE THE CIFilter INSTANCE
+    // http://developer.apple.com/mac/library/documentation/GraphicsImaging/Reference/CoreImageFilterReference/Reference/reference.html#//apple_ref/doc/uid/TP40004346
+    
+    // http://www.devonferns.com/cocoablog/?p=3
+    
+    transitionFilter_ = [CIFilter filterWithName:@"CIRippleTransition"];
+    [transitionFilter_ retain];    
+
+	// SET THE FILTER TO ITS DEFAULT PARAMETERS WITH setDefaults
+    [transitionFilter_ setDefaults];
+    
+    // SET ANY PARAMETERS FOR WHICH THE DEFAULTS ARE NOT SUFFICIENT
+    // REMEMBER : CATransition ANIMATIONS REQUIRE A CORE IMAGE FILTER WITH THE FOLLOWING PARAMETERS:
 	// input keys :
 	//	  'inputImage', 'inputTargetImage' and 'inputTime' input
 	// output key :
 	//	  'outputImage'
 	// optional input:
-	//    'inputExtent'
-	
+	//    'inputExtent'	
 	// ALL OF THE FILTERS IN THE CATEGORY CICategoryTransition FIT THE REQUIREMENTS
-	
-	
-	// CREATE THE CIFilter INSTANCE
-	
-	// SET THE FILTER TO ITS DEFAULT PARAMETERS WITH setDefaults
-	
-	// SET ANY PARAMETERS FOR WHICH THE DEFAULTS ARE NOT SUFFICIENT
-	
+    
+    [transitionFilter_ setValue:@"restrictedshine.tiff" forKey:@"inputImage"];
+    [transitionFilter_ setValue:@"restrictedshine.tiff" forKey:@"inputTargetImage"];
+    //[transitionFilter_ setValue:0.5 forKey:@"inputTime"];
+    
+    //[transitionFilter_ setValue:[CIVector vectorWithX:(rect.size.width/2.0) Y:(rect.size.height/2.0)] forKey:@"inputCenter"];
+    //[transitionFilter_ setValue:[CIVector vectorWithX:rect.origin.x Y:rect.origin.y Z:rect.size.width W:rect.size.height] forKey:@"inputExtent"];
+    
+    //[animation setFilter:rippleFilter];    
+
+
 	// start on the image browsing view
 	[self presentBrowsingView];
 	

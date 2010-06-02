@@ -32,7 +32,6 @@
 	
 	ImageBrowseViewController*	imageBrowseController_;
 	ImageEditViewController*	imageEditController_;
-	
 }
 
 

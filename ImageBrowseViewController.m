@@ -45,7 +45,15 @@
 {
 	// Setup the browser with some default images that should be installed on the system
     images_ = [[NSMutableArray alloc] init];
-	
+    
+    // add images from application bundle
+    NSString* gifPath = [[NSBundle mainBundle] pathForResource:@"predict" ofType:@"gif"];    
+    [self addImageWithPath:gifPath];
+    NSString* jpgPath = [[NSBundle mainBundle] pathForResource:@"baileySit100514" ofType:@"jpg"];    
+    [self addImageWithPath:jpgPath];
+    NSString *pngPath = [[NSBundle mainBundle] pathForResource:@"russianRocket" ofType:@"png"];
+    [self addImageWithPath:pngPath];
+    	
 	[self addImagesFromDirectory:@"/Library/Desktop Pictures/"];	
 	
 	// sync up the zoom slider and the image browser zoom level
