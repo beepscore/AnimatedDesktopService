@@ -6,6 +6,7 @@
 //
 //  Copyright 2010 Chris Parrish
 //
+//  Reference: ViewTransitionsAppDelegate
 
 #import "ApplicationController.h"
 #import "ImageShareService.h"
@@ -80,7 +81,7 @@ static ApplicationController*		sharedApplicationController = nil;
 	
 	[transitionFilter_ release];
 	transitionFilter_ = nil;
-
+    
 	[super dealloc];
 }
 
@@ -131,9 +132,16 @@ static ApplicationController*		sharedApplicationController = nil;
     
     // http://www.devonferns.com/cocoablog/?p=3
     
-    transitionFilter_ = [CIFilter filterWithName:@"CIRippleTransition"];
-    [transitionFilter_ retain];    
+// ????: don't need these?????    
+//    CIContext* context;
+//    context = [[NSGraphicsContext currentContext] CIContext];    
+//    CIImage* ciImage = [CIImage imageWithCGImage:[imageBrowseController_ selectedImage]];
+    
 
+//    transitionFilter_ = [CIFilter filterWithName:@"CIRippleTransition"];
+    transitionFilter_ = [CIFilter filterWithName:@"CIPageCurlTransition"];
+    [transitionFilter_ retain];    
+    
 	// SET THE FILTER TO ITS DEFAULT PARAMETERS WITH setDefaults
     [transitionFilter_ setDefaults];
     
@@ -147,16 +155,15 @@ static ApplicationController*		sharedApplicationController = nil;
 	//    'inputExtent'	
 	// ALL OF THE FILTERS IN THE CATEGORY CICategoryTransition FIT THE REQUIREMENTS
     
-    [transitionFilter_ setValue:@"restrictedshine.tiff" forKey:@"inputImage"];
-    [transitionFilter_ setValue:@"restrictedshine.tiff" forKey:@"inputTargetImage"];
+    //[transitionFilter_ setValue:ciImage forKey:@"inputImage"];
+    //result = [transitionFilter_ valueForKey:@"outputImage"];
+    
+    //[transitionFilter_ setValue:@"restrictedshine.tiff" forKey:@"inputShadingImage"];
     //[transitionFilter_ setValue:0.5 forKey:@"inputTime"];
     
     //[transitionFilter_ setValue:[CIVector vectorWithX:(rect.size.width/2.0) Y:(rect.size.height/2.0)] forKey:@"inputCenter"];
     //[transitionFilter_ setValue:[CIVector vectorWithX:rect.origin.x Y:rect.origin.y Z:rect.size.width W:rect.size.height] forKey:@"inputExtent"];
     
-    //[animation setFilter:rippleFilter];    
-
-
 	// start on the image browsing view
 	[self presentBrowsingView];
 	
@@ -165,6 +172,7 @@ static ApplicationController*		sharedApplicationController = nil;
 	
 	[sendingProgress_ setHidden:YES];
 }
+
 
 #pragma mark -
 #pragma mark Service
@@ -175,12 +183,14 @@ static ApplicationController*		sharedApplicationController = nil;
 	[[[logTextField_ textStorage] mutableString] appendString: newString];
 }
 
+
 - (void) startService
 {
 	imageShareService_ = [[ImageShareService alloc] init];
 	[imageShareService_ startService];
 	[imageShareService_ publishService];
 }
+
 
 - (void) sendImage:(NSImage*)image
 {
@@ -193,13 +203,13 @@ static ApplicationController*		sharedApplicationController = nil;
 	[self presentSendingView];
 }
 
+
 - (void) beginSendingImage:(NSImage*)image
 {
 	// First we will show and start the progress indicator
 	// NOTE : I found that the bar style progress inidcator
 	//        would not animate when it used a layer backed view required for 
-	//        core animation. Only the spinning indicator seems to work here
-	
+	//        core animation. Only the spinning indicator seems to work here	
 	[sendingProgress_ setHidden:NO];
 	[sendingProgress_ startAnimation:self];
 	
@@ -235,26 +245,37 @@ static ApplicationController*		sharedApplicationController = nil;
 	// TODO: HW_TODO :
 	
 	// CREATE THE CATransition ANIMATION
+    // this starts an implicit animation
+    // Ref http://stackoverflow.com/questions/2233692/how-does-catransition-work
+    CATransition *transition = [[CATransition alloc] init];
 	
-	// SET ANY PARAMETERS ON IT ( TIMING FUNCTION, DURATION
-	
+	// SET ANY PARAMETERS ON IT ( TIMING FUNCTION, DURATION )
+    [transition setDuration:1.0f];
+    
 	// SET THE FILTER FOR THE CATransition TO THE CIFilter YOU WANT TO USE
+    [transition setFilter:transitionFilter_];
     
 	// CREATE A DICTIONARY WITH KEY PAIRS. 
 	// KEY == ANIMATION ACITON  ("subviews")
 	// VALUE == THE CATransition ANIMATION YOU WANT TO USE
 	// THIS WILL CAUSE THE ANIMATION TO FIRE WHENEVER THE SUBVIEWS OF THE STATUS
 	// VIEW ARE CHANGED
+    NSDictionary* animationDict = [[NSDictionary alloc] 
+                                   initWithObjectsAndKeys: transition, @"subviews", nil];    
+    
 	
 	// ADD THE ANIMATION DICTONARY TO THE VIEW THAT WILL HAVE ITS SUBVIEWS EXCHANGED
 	// THIS VIEW IS statusView_ AND THE METHOD IS setAnimations:
-	
-	
+    [statusView_ setAnimations:animationDict];
+
+    
 	// finally, swap the subviews.
 	// WITHOUT SETTING OUR OWN ANIMATION, THIS WILL USE THE IMPLICIT ANIMATION
 	// ASSOCIATED WITH THIS VIEW BECAUSE WE HAVE MADE IT A LAYER BACKED VIEW
 	[[statusView_ animator] replaceSubview:sendingView_ with:logView_];
-	
+    
+    [animationDict release];
+    [transition release];
 }
 
 
@@ -270,25 +291,35 @@ static ApplicationController*		sharedApplicationController = nil;
 	// TODO: HW_TODO :
 	
 	// CREATE THE CATransition ANIMATION
+    CATransition *transition = [[CATransition alloc] init];
     
-	// SET ANY PARAMETERS ON IT ( TIMING FUNCTION, DURATION
-	
+	// SET ANY PARAMETERS ON IT ( TIMING FUNCTION, DURATION )
+    [transition setDuration:1.0f];
+    
 	// SET THE FILTER FOR THE CATransition TO THE CIFilter YOU WANT TO USE
-	
+    [transition setFilter:transitionFilter_];
+    
 	// SPECIAL WORK FOR THIS CASE :
 	// WE WANT TO START SENDING AFTER THE ANIMATION FINISHES
 	// TO DO THAT, WE SET OURSELVES AS THE DELEGATE FOR THIS ANIMATION
 	// AND WE START THE ACTUAL IMAGE SENDING IN THE DELEGATE METHOD
 	// THAT IS CALLED FOR ANIMATION ENDING
+    // (SB- animationDidStop:finished:)
+    transition.delegate = self;
+    
 	
 	// CREATE A DICTIONARY WITH KEY PAIRS. 
 	// KEY == ANIMATION ACITON  ("subviews")
 	// VALUE == THE CATransition ANIMATION YOU WANT TO USE
 	// THIS WILL CAUSE THE ANIMATION TO FIRE WHENEVER THE SUBVIEWS OF THE STATUS
 	// VIEW ARE CHANGED
+    NSDictionary* animationDict = [[NSDictionary alloc] 
+                                   initWithObjectsAndKeys: transition, @"subviews", nil];    
+    
 	
 	// ADD THE ANIMATION DICTONARY TO THE VIEW THAT WILL HAVE ITS SUBVIEWS EXCHANGED
 	// THIS VIEW IS statusView_ AND THE METHOD IS setAnimations:	
+    [statusView_ setAnimations:animationDict];
     
 	// finally, swap the subviews. This will animate as long as the 
 	// "subviews" key has an associated animation
@@ -303,18 +334,20 @@ static ApplicationController*		sharedApplicationController = nil;
 	//        THING AS THE BLOCK HERE
 	
     
-     // REMOVE THIS LINE WHEN YOU HAVE YOUR ANIMATION ADDED WITH self AS THE DELEGATE
-	[CATransaction begin];
+    // REMOVE THIS LINE WHEN YOU HAVE YOUR ANIMATION ADDED WITH self AS THE DELEGATE
+	//[CATransaction begin];
     // REMOVE THIS LINE TOO
-	[CATransaction setCompletionBlock:^(void){[self beginSendingImage:[imageBrowseController_ selectedImage]];}];     
+	//[CATransaction setCompletionBlock:^(void){[self beginSendingImage:[imageBrowseController_ selectedImage]];}];     
     
-	// ????: SB- keep this line?
+	// SB- keep this line
     [[statusView_ animator] replaceSubview:logView_ with:sendingView_];		
-
-    // AND REMOVE THIS LINE
-    [CATransaction commit];
     
+    // AND REMOVE THIS LINE
+    // [CATransaction commit];
+    [animationDict release];
+    [transition release];    
 }
+
 
 - (void)animationDidStop:(CAAnimation *)anim finished:(BOOL)flag
 {

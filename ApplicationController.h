@@ -34,25 +34,24 @@
 	ImageEditViewController*	imageEditController_;
 }
 
-
-@property (nonatomic, assign) IBOutlet NSView*			statusView;
 // Status view is a container view that will swap between
 // showing either the log view or the sending view
-@property (nonatomic, retain) IBOutlet NSView*			logView;
-@property (nonatomic, retain) IBOutlet NSView*			sendingView;
-// NOTE : retaining these views, because we are going to
+@property (nonatomic, assign) IBOutlet NSView*			statusView;
+
+// NOTE : retain these views, because we are going to
 //        add and remove them from the hiearchy and we don't want
 //        their retain count to go to zero when swapped
+@property (nonatomic, retain) IBOutlet NSView*			logView;
+@property (nonatomic, retain) IBOutlet NSView*			sendingView;
 
 @property (nonatomic, assign) IBOutlet NSTextView*		logTextField;
 @property (nonatomic, assign) IBOutlet NSImageView*		sendingPreviewImage;
 @property (nonatomic, assign) IBOutlet NSProgressIndicator* sendingProgress;
 
-@property (nonatomic, assign) IBOutlet NSView*			contentHolder;
 // Content holder is a simple view that is the holder for the image editing
 // and image browsing views that we swap in and out. This can make some
 // management of the view easier by defining a frame that the content is allowed up.
-
+@property (nonatomic, assign) IBOutlet NSView*			contentHolder;
 
 + (ApplicationController*)sharedApplicationController;
 
