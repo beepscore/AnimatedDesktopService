@@ -81,6 +81,7 @@ static ApplicationController*		sharedApplicationController = nil;
 	
 	[transitionFilter_ release];
 	transitionFilter_ = nil;
+
     
 	[super dealloc];
 }
@@ -131,20 +132,17 @@ static ApplicationController*		sharedApplicationController = nil;
     // http://developer.apple.com/mac/library/documentation/GraphicsImaging/Reference/CoreImageFilterReference/Reference/reference.html#//apple_ref/doc/uid/TP40004346
     
     // http://www.devonferns.com/cocoablog/?p=3
-    
-// ????: don't need these?????    
-//    CIContext* context;
-//    context = [[NSGraphicsContext currentContext] CIContext];    
-//    CIImage* ciImage = [CIImage imageWithCGImage:[imageBrowseController_ selectedImage]];
-    
 
-//    transitionFilter_ = [CIFilter filterWithName:@"CIRippleTransition"];
-    transitionFilter_ = [CIFilter filterWithName:@"CIPageCurlTransition"];
+
+    //transitionFilter_ = [CIFilter filterWithName:@"CIPageCurlTransition"];
+    //transitionFilter_ = [CIFilter filterWithName:@"CIRippleTransition"];
+    transitionFilter_ = [CIFilter filterWithName:@"CIDissolveTransition"];
     [transitionFilter_ retain];    
     
 	// SET THE FILTER TO ITS DEFAULT PARAMETERS WITH setDefaults
     [transitionFilter_ setDefaults];
     
+
     // SET ANY PARAMETERS FOR WHICH THE DEFAULTS ARE NOT SUFFICIENT
     // REMEMBER : CATransition ANIMATIONS REQUIRE A CORE IMAGE FILTER WITH THE FOLLOWING PARAMETERS:
 	// input keys :
@@ -154,16 +152,59 @@ static ApplicationController*		sharedApplicationController = nil;
 	// optional input:
 	//    'inputExtent'	
 	// ALL OF THE FILTERS IN THE CATEGORY CICategoryTransition FIT THE REQUIREMENTS
+
+    NSURL* inputImageUrl;
+    inputImageUrl = [NSURL fileURLWithPath: [[NSBundle mainBundle]
+                                             pathForResource: @"baileySit100514"
+                                             ofType: @"jpg"]];    
+    CIImage* inputImage = [[CIImage alloc] initWithContentsOfURL: inputImageUrl];
+    [transitionFilter_ setValue:inputImage forKey:@"inputImage"];
+    [inputImage release];
+
     
-    //[transitionFilter_ setValue:ciImage forKey:@"inputImage"];
-    //result = [transitionFilter_ valueForKey:@"outputImage"];
+    NSURL *inputTargetImageUrl;
+    inputTargetImageUrl = [NSURL fileURLWithPath:[[NSBundle mainBundle] 
+                                  pathForResource: @"russianRocket"
+                                  ofType: @"png"]];
+    CIImage* inputTargetImage = [[CIImage alloc] initWithContentsOfURL: inputTargetImageUrl];
+    [transitionFilter_ setValue:inputTargetImage forKey:@"inputTargetImage"];
+    [inputTargetImage release];
+
     
-    //[transitionFilter_ setValue:@"restrictedshine.tiff" forKey:@"inputShadingImage"];
-    //[transitionFilter_ setValue:0.5 forKey:@"inputTime"];
+// 	  NSRect statusBounds = [statusView_ bounds];
+//    [transitionFilter_ setValue:[CIVector vectorWithX:statusBounds.origin.x 
+//                                                    Y:statusBounds.origin.y
+//                                                    Z:statusBounds.size.width 
+//                                                    W:statusBounds.size.height]
+//                         forKey:@"inputExtent"];
+//    [transitionFilter_ setValue:[CIVector vectorWithX:(statusBounds.size.width/2.0)
+//                                                    Y:(statusBounds.size.height/2.0)]
+//                         forKey:@"inputCenter"];
+//    
     
-    //[transitionFilter_ setValue:[CIVector vectorWithX:(rect.size.width/2.0) Y:(rect.size.height/2.0)] forKey:@"inputCenter"];
-    //[transitionFilter_ setValue:[CIVector vectorWithX:rect.origin.x Y:rect.origin.y Z:rect.size.width W:rect.size.height] forKey:@"inputExtent"];
+
+//    CIImage* outputImage = [[CIImage alloc] init];    
+//    [transitionFilter_ setValue:outputImage forKey:@"outputImage"];
+
     
+/////////////////////////////
+    //    FilePathImageObject* imageObject = [images_ objectAtIndex:selectedImage];
+    //	
+    //	NSImage* image = [[[NSImage alloc] initWithContentsOfFile:imageObject.filePath] autorelease];
+    //    
+    //    NSString* path = [imageBrowseController_ selectedImage];
+    //    CIImage* ciImage = [[CIImage alloc] 
+    //                        initWithContentsOfURL:[NSURL fileURLWithPath:path]];
+/////////////////////////////
+   
+   
+    
+    // ????: render output to a context?????    
+    //CIContext* context;
+    //context = [[NSGraphicsContext currentContext] CIContext];
+
+    
+     
 	// start on the image browsing view
 	[self presentBrowsingView];
 	
