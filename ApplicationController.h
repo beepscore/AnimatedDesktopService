@@ -34,6 +34,7 @@
 	ImageEditViewController*	imageEditController_;
     
     CIImage * restrictedshineImage;
+    NSString* filterName;
 }
 
 // Status view is a container view that will swap between
@@ -54,6 +55,8 @@
 // and image browsing views that we swap in and out. This can make some
 // management of the view easier by defining a frame that the content is allowed up.
 @property (nonatomic, assign) IBOutlet NSView*			contentHolder;
+
+@property (nonatomic, retain) NSString *filterName;
 
 + (ApplicationController*)sharedApplicationController;
 

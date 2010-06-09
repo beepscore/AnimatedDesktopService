@@ -13,7 +13,6 @@
 #import "ImageBrowseViewController.h"
 #import "ImageEditViewController.h"
 
-
 #pragma mark Static
 static ApplicationController*		sharedApplicationController = nil;
 
@@ -30,7 +29,7 @@ static ApplicationController*		sharedApplicationController = nil;
 
 @implementation ApplicationController
 
-const CGFloat kTransitionDuration = 3.0;
+const CGFloat kTransitionDuration = 2.0;
 
 @synthesize contentHolder = contentHolder_;
 @synthesize statusView = statusView_;
@@ -41,6 +40,7 @@ const CGFloat kTransitionDuration = 3.0;
 @synthesize sendingPreviewImage = sendingPreviewImage_;
 @synthesize sendingProgress = sendingProgress_;
 
+@synthesize filterName;
 
 #pragma mark Singleton
 
@@ -85,6 +85,9 @@ const CGFloat kTransitionDuration = 3.0;
 	[transitionFilter_ release];
 	transitionFilter_ = nil;
     
+    [filterName release];
+    filterName = nil;
+
 	[super dealloc];
 }
 
@@ -147,14 +150,18 @@ const CGFloat kTransitionDuration = 3.0;
 	//    'inputExtent'	
 	// ALL OF THE FILTERS IN THE CATEGORY CICategoryTransition FIT THE REQUIREMENTS
 
-    ////////////////////////////////////
     // set up desired filter
-    // [self setupDissolveTransition];
-    // [self setupFlashTransition];
-    //[self setupModTransition];    
-    [self setupPageCurlTransition];
-    // [self setupRippleTransition];
-    ////////////////////////////////////
+    self.filterName = @"CIPageCurlTransition";
+    if ([@"CIDissolveTransition" isEqualToString:self.filterName])
+        [self setupDissolveTransition];
+    if ([@"CIFlashTransition" isEqualToString:self.filterName])
+        [self setupFlashTransition];
+    if ([@"CIModTransition" isEqualToString:self.filterName])
+        [self setupModTransition];
+    if ([@"CIPageCurlTransition" isEqualToString:self.filterName])
+        [self setupPageCurlTransition];
+    if ([@"CIRippleTransition" isEqualToString:self.filterName])
+        [self setupRippleTransition];
         
     NSLog(@"[transitionFilter_ attributes] = %@", [transitionFilter_ attributes]);
     NSLog(@"[transitionFilter_ inputKeys] = %@", [transitionFilter_ inputKeys]);
@@ -203,17 +210,17 @@ const CGFloat kTransitionDuration = 3.0;
     [transitionFilter_ retain];
     [transitionFilter_ setDefaults];
     
-    CIColor* tempBacksideImageCIColor = [CIColor colorWithRed:0.5 green:0.5 blue:0.5 alpha:1.0];
-    CIImage* tempBacksideImage = [CIImage imageWithColor:tempBacksideImageCIColor];    
-    [transitionFilter_ setValue:tempBacksideImage forKey:@"inputBacksideImage"];
-    
-    [transitionFilter_ setValue:[self restrictedshineImage] forKey:@"inputShadingImage"];
     [transitionFilter_ setValue:[CIVector vectorWithX:statusView_.bounds.origin.x 
                                                     Y:statusView_.bounds.origin.y 
                                                     Z:statusView_.bounds.size.width 
                                                     W:statusView_.bounds.size.height] 
                          forKey:@"inputExtent"];
     [transitionFilter_ setValue:[NSNumber numberWithFloat: (0.25 * M_PI)] forKey:@"inputAngle"];
+    [transitionFilter_ setValue:[self restrictedshineImage] forKey:@"inputShadingImage"];
+
+    CIColor* tempBacksideImageCIColor = [CIColor colorWithRed:0.5 green:0.5 blue:0.5 alpha:1.0];
+    CIImage* tempBacksideImage = [CIImage imageWithColor:tempBacksideImageCIColor];    
+    [transitionFilter_ setValue:tempBacksideImage forKey:@"inputBacksideImage"];
 }
 
 
@@ -319,6 +326,12 @@ const CGFloat kTransitionDuration = 3.0;
     [transition setDuration:kTransitionDuration];
     
 	// SET THE FILTER FOR THE CATransition TO THE CIFilter YOU WANT TO USE
+    if ([@"CIPageCurlTransition" isEqualToString:self.filterName])
+    {
+        CIColor* tempBacksideImageCIColor = [CIColor colorWithRed:0.0 green:0.0 blue:0.5 alpha:1.0];
+        CIImage* tempBacksideImage = [CIImage imageWithColor:tempBacksideImageCIColor];    
+        [transitionFilter_ setValue:tempBacksideImage forKey:@"inputBacksideImage"];        
+    }    
     [transition setFilter:transitionFilter_];
     
 	// CREATE A DICTIONARY WITH KEY PAIRS. 
@@ -359,6 +372,14 @@ const CGFloat kTransitionDuration = 3.0;
     [transition setDuration:kTransitionDuration];
     
 	// SET THE FILTER FOR THE CATransition TO THE CIFilter YOU WANT TO USE
+
+///////////////////
+    if ([@"CIPageCurlTransition" isEqualToString:self.filterName])
+    {
+        CIColor* tempBacksideImageCIColor = [CIColor colorWithRed:0.5 green:0.0 blue:0.0 alpha:1.0];
+        CIImage* tempBacksideImage = [CIImage imageWithColor:tempBacksideImageCIColor];    
+        [transitionFilter_ setValue:tempBacksideImage forKey:@"inputBacksideImage"];        
+    }
     [transition setFilter:transitionFilter_];
     
 	// SPECIAL WORK FOR THIS CASE :
