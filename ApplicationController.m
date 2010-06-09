@@ -126,7 +126,7 @@ static ApplicationController*		sharedApplicationController = nil;
 	// TODO: HW_TODO : 
 	// Set up a Core Image filter to use for transitions between log and status view
 	// Do this here so we only create the filter once and reuse it
-	// You can create it on demand right before you use it as well (SB- instead)
+	// Alternatively, you could create it on demand right before you use it (SB edited)
     
     // CREATE THE CIFilter INSTANCE
     // http://developer.apple.com/mac/library/documentation/GraphicsImaging/Reference/CoreImageFilterReference/Reference/reference.html#//apple_ref/doc/uid/TP40004346
@@ -140,8 +140,7 @@ static ApplicationController*		sharedApplicationController = nil;
     [transitionFilter_ retain];    
     
 	// SET THE FILTER TO ITS DEFAULT PARAMETERS WITH setDefaults
-    [transitionFilter_ setDefaults];
-    
+    [transitionFilter_ setDefaults];    
 
     // SET ANY PARAMETERS FOR WHICH THE DEFAULTS ARE NOT SUFFICIENT
     // REMEMBER : CATransition ANIMATIONS REQUIRE A CORE IMAGE FILTER WITH THE FOLLOWING PARAMETERS:
@@ -153,25 +152,32 @@ static ApplicationController*		sharedApplicationController = nil;
 	//    'inputExtent'	
 	// ALL OF THE FILTERS IN THE CATEGORY CICategoryTransition FIT THE REQUIREMENTS
 
-    NSURL* inputImageUrl;
-    inputImageUrl = [NSURL fileURLWithPath: [[NSBundle mainBundle]
-                                             pathForResource: @"baileySit100514"
-                                             ofType: @"jpg"]];    
-    CIImage* inputImage = [[CIImage alloc] initWithContentsOfURL: inputImageUrl];
-    [transitionFilter_ setValue:inputImage forKey:@"inputImage"];
-    [inputImage release];
+//    NSURL* inputImageUrl;
+//    inputImageUrl = [NSURL fileURLWithPath: [[NSBundle mainBundle]
+//                                             pathForResource: @"baileySit100514"
+//                                             ofType: @"jpg"]];    
+//    CIImage* inputImage = [[CIImage alloc] initWithContentsOfURL: inputImageUrl];
+//    [transitionFilter_ setValue:inputImage forKey:@"inputImage"];
+//    [inputImage release];
 
     
-    NSURL *inputTargetImageUrl;
-    inputTargetImageUrl = [NSURL fileURLWithPath:[[NSBundle mainBundle] 
-                                  pathForResource: @"russianRocket"
-                                  ofType: @"png"]];
-    CIImage* inputTargetImage = [[CIImage alloc] initWithContentsOfURL: inputTargetImageUrl];
-    [transitionFilter_ setValue:inputTargetImage forKey:@"inputTargetImage"];
-    [inputTargetImage release];
+//    NSURL *inputTargetImageUrl;
+//    inputTargetImageUrl = [NSURL fileURLWithPath:[[NSBundle mainBundle] 
+//                                  pathForResource: @"russianRocket"
+//                                  ofType: @"png"]];
+//    CIImage* inputTargetImage = [[CIImage alloc] initWithContentsOfURL: inputTargetImageUrl];
+//    [transitionFilter_ setValue:inputTargetImage forKey:@"inputTargetImage"];
+//    [inputTargetImage release];
+
+    NSLog(@"[transitionFilter_ attributes] = %@", [transitionFilter_ attributes]);
+    NSLog(@"[transitionFilter_ inputKeys] = %@", [transitionFilter_ inputKeys]);
+    NSLog(@"[transitionFilter_ valueForKey:@\"inputImage\"] = %@", [transitionFilter_ valueForKey:@"inputImage"]);
+    NSLog(@"[transitionFilter_ outputKeys] = %@", [transitionFilter_ outputKeys]);
 
     
 // 	  NSRect statusBounds = [statusView_ bounds];
+
+// dissolve doesn't use these keys
 //    [transitionFilter_ setValue:[CIVector vectorWithX:statusBounds.origin.x 
 //                                                    Y:statusBounds.origin.y
 //                                                    Z:statusBounds.size.width 
@@ -203,6 +209,8 @@ static ApplicationController*		sharedApplicationController = nil;
     //CIContext* context;
     //context = [[NSGraphicsContext currentContext] CIContext];
 
+    // ????: need to apply the filter to a layer?????????????
+    //Add the CATransition to the view's layer?????????????
     
      
 	// start on the image browsing view
@@ -288,7 +296,12 @@ static ApplicationController*		sharedApplicationController = nil;
 	// CREATE THE CATransition ANIMATION
     // this starts an implicit animation
     // Ref http://stackoverflow.com/questions/2233692/how-does-catransition-work
+
     CATransition *transition = [[CATransition alloc] init];
+    //[[statusView_ layer] addAnimation:transition forKey:nil];
+
+//    CATransition *transition = [CATransition animation];
+//    [transition retain];
 	
 	// SET ANY PARAMETERS ON IT ( TIMING FUNCTION, DURATION )
     [transition setDuration:1.0f];
@@ -333,6 +346,11 @@ static ApplicationController*		sharedApplicationController = nil;
 	
 	// CREATE THE CATransition ANIMATION
     CATransition *transition = [[CATransition alloc] init];
+    //[[statusView_ layer] addAnimation:transition forKey:nil];
+
+    //    CATransition *transition = [CATransition animation];
+    //    [transition retain];
+
     
 	// SET ANY PARAMETERS ON IT ( TIMING FUNCTION, DURATION )
     [transition setDuration:1.0f];
@@ -361,7 +379,7 @@ static ApplicationController*		sharedApplicationController = nil;
 	// ADD THE ANIMATION DICTONARY TO THE VIEW THAT WILL HAVE ITS SUBVIEWS EXCHANGED
 	// THIS VIEW IS statusView_ AND THE METHOD IS setAnimations:	
     [statusView_ setAnimations:animationDict];
-    
+
 	// finally, swap the subviews. This will animate as long as the 
 	// "subviews" key has an associated animation
 	
