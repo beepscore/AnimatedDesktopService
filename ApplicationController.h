@@ -68,5 +68,8 @@
 
 - (CIImage *)restrictedshineImage;
 
+- (void)setupDissolveTransition;
+- (void)setupPageCurlTransition;
+- (void)setupRippleTransition;
 
 @end

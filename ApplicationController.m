@@ -30,6 +30,8 @@ static ApplicationController*		sharedApplicationController = nil;
 
 @implementation ApplicationController
 
+const CGFloat kTransitionDuration = 3.0;
+
 @synthesize contentHolder = contentHolder_;
 @synthesize statusView = statusView_;
 @synthesize logView = logView_;
@@ -52,6 +54,7 @@ static ApplicationController*		sharedApplicationController = nil;
     }
     return sharedApplicationController;
 }
+
 
 + (id)allocWithZone:(NSZone *)zone
 {
@@ -81,15 +84,16 @@ static ApplicationController*		sharedApplicationController = nil;
 	
 	[transitionFilter_ release];
 	transitionFilter_ = nil;
-
     
 	[super dealloc];
 }
+
 
 - (id)copyWithZone:(NSZone *)zone
 {
     return self;
 }
+
 
 - (id)retain
 {
@@ -120,8 +124,7 @@ static ApplicationController*		sharedApplicationController = nil;
 	// In some situations you might do this on demand to control memory use for instance
 	imageBrowseController_ = [[ImageBrowseViewController alloc] initWithNibName:@"ImageBrowsingView" bundle:nil];
     
-	imageEditController_ = [[ImageEditViewController alloc] initWithNibName:@"ImageEditingView" bundle:nil];
-	
+	imageEditController_ = [[ImageEditViewController alloc] initWithNibName:@"ImageEditingView" bundle:nil];	
 	
 	// TODO: HW_TODO : 
 	// Set up a Core Image filter to use for transitions between log and status view
@@ -130,17 +133,9 @@ static ApplicationController*		sharedApplicationController = nil;
     
     // CREATE THE CIFilter INSTANCE
     // http://developer.apple.com/mac/library/documentation/GraphicsImaging/Reference/CoreImageFilterReference/Reference/reference.html#//apple_ref/doc/uid/TP40004346
-    
     // http://www.devonferns.com/cocoablog/?p=3
 
-    //transitionFilter_ = [CIFilter filterWithName:@"CIPageCurlTransition"];
-    //transitionFilter_ = [CIFilter filterWithName:@"CIDissolveTransition"];
-    transitionFilter_ = [CIFilter filterWithName:@"CIRippleTransition"
-                                   keysAndValues:nil];
-    [transitionFilter_ retain];
-    
 	// SET THE FILTER TO ITS DEFAULT PARAMETERS WITH setDefaults
-    [transitionFilter_ setDefaults];    
     
     // SET ANY PARAMETERS FOR WHICH THE DEFAULTS ARE NOT SUFFICIENT
     // REMEMBER : CATransition ANIMATIONS REQUIRE A CORE IMAGE FILTER WITH THE FOLLOWING PARAMETERS:
@@ -152,11 +147,13 @@ static ApplicationController*		sharedApplicationController = nil;
 	//    'inputExtent'	
 	// ALL OF THE FILTERS IN THE CATEGORY CICategoryTransition FIT THE REQUIREMENTS
 
-    transitionFilter_.name = @"transitionFilter_";
-    
-    [transitionFilter_ setValue:[self restrictedshineImage]
-                         forKey:@"inputShadingImage"];
-
+    ////////////////////////////////////
+    // set up desired filter
+    //[self setupDissolveTransition];
+    // [self setupPageCurlTransition];
+    [self setupRippleTransition];
+    ////////////////////////////////////
+        
     NSLog(@"[transitionFilter_ attributes] = %@", [transitionFilter_ attributes]);
     NSLog(@"[transitionFilter_ inputKeys] = %@", [transitionFilter_ inputKeys]);
     NSLog(@"[transitionFilter_ outputKeys] = %@", [transitionFilter_ outputKeys]);
@@ -168,6 +165,37 @@ static ApplicationController*		sharedApplicationController = nil;
 	[self presentLogView];
 	
 	[sendingProgress_ setHidden:YES];
+}
+
+
+- (void)setupDissolveTransition
+{
+    transitionFilter_ = [CIFilter filterWithName:@"CIDissolveTransition"];    
+    [transitionFilter_ retain];
+    [transitionFilter_ setDefaults];        
+    // don't need to set name
+    //[transitionFilter_ setName:@"transitionFilter_"];    
+}
+
+
+- (void)setupPageCurlTransition
+{
+    transitionFilter_ = [CIFilter filterWithName:@"CIPageCurlTransition"];    
+    [transitionFilter_ retain];
+    [transitionFilter_ setDefaults];    
+    [transitionFilter_ setValue:[self restrictedshineImage] forKey:@"inputBacksideImage"];    
+    [transitionFilter_ setValue:[self restrictedshineImage] forKey:@"inputShadingImage"];
+}
+
+
+- (void)setupRippleTransition
+{
+    transitionFilter_ = [CIFilter filterWithName:@"CIRippleTransition"];
+    // this works too
+    // transitionFilter_ = [CIFilter filterWithName:@"CIRippleTransition" keysAndValues:nil];    
+    [transitionFilter_ retain];
+    [transitionFilter_ setDefaults];    
+    [transitionFilter_ setValue:[self restrictedshineImage] forKey:@"inputShadingImage"];
 }
 
 
@@ -210,10 +238,8 @@ static ApplicationController*		sharedApplicationController = nil;
 {
 	// First, swap over to the sending view
 	// startup the progress indicator 
-	// and then start the send
-	
-	[sendingPreviewImage_ setImage:[imageBrowseController_ selectedImage]];
-	
+	// and then start the send	
+	[sendingPreviewImage_ setImage:[imageBrowseController_ selectedImage]];	
 	[self presentSendingView];
 }
 
@@ -236,8 +262,7 @@ static ApplicationController*		sharedApplicationController = nil;
 	// once we return from the synchronous sending, 
 	// stop the progress indicator and hide it
 	[sendingProgress_ stopAnimation:self];
-	[sendingProgress_ setHidden:YES];
-	
+	[sendingProgress_ setHidden:YES];	
 	
 	// finally go back to the log view
 	[self presentLogView];
@@ -254,18 +279,15 @@ static ApplicationController*		sharedApplicationController = nil;
 	// time this view was in the status area	
 	NSRect statusBounds = [statusView_ bounds];
 	[logView_ setFrame:statusBounds];
-    
-	
-	// TODO: HW_TODO :
-	
+    	
+	// TODO: HW_TODO :	
 	// CREATE THE CATransition ANIMATION
     // this starts an implicit animation
     // Ref http://stackoverflow.com/questions/2233692/how-does-catransition-work
-
     CATransition *transition = [[CATransition alloc] init];
 	
 	// SET ANY PARAMETERS ON IT ( TIMING FUNCTION, DURATION )
-    [transition setDuration:1.0f];
+    [transition setDuration:kTransitionDuration];
     
 	// SET THE FILTER FOR THE CATransition TO THE CIFilter YOU WANT TO USE
     [transition setFilter:transitionFilter_];
@@ -277,12 +299,10 @@ static ApplicationController*		sharedApplicationController = nil;
 	// VIEW ARE CHANGED
     NSDictionary* animationDict = [[NSDictionary alloc] 
                                    initWithObjectsAndKeys: transition, @"subviews", nil];    
-    
-	
+    	
 	// ADD THE ANIMATION DICTONARY TO THE VIEW THAT WILL HAVE ITS SUBVIEWS EXCHANGED
 	// THIS VIEW IS statusView_ AND THE METHOD IS setAnimations:
     [statusView_ setAnimations:animationDict];
-
     
 	// finally, swap the subviews.
 	// WITHOUT SETTING OUR OWN ANIMATION, THIS WILL USE THE IMPLICIT ANIMATION
@@ -307,7 +327,7 @@ static ApplicationController*		sharedApplicationController = nil;
     CATransition *transition = [[CATransition alloc] init];
     
 	// SET ANY PARAMETERS ON IT ( TIMING FUNCTION, DURATION )
-    [transition setDuration:1.0f];
+    [transition setDuration:kTransitionDuration];
     
 	// SET THE FILTER FOR THE CATransition TO THE CIFilter YOU WANT TO USE
     [transition setFilter:transitionFilter_];
@@ -342,11 +362,9 @@ static ApplicationController*		sharedApplicationController = nil;
 	//        UNTIL YOU PROVIDE YOUR OWN ANIMATION ABOVE. WHEN YOU SET THE DELEGATE OF THAT
 	//        ANIMATION animationDidStop:finished: WILL BE CALLED WHICH DOES THE SAME
 	//        THING AS THE BLOCK HERE
-	
-    
-    // REMOVE THIS LINE WHEN YOU HAVE YOUR ANIMATION ADDED WITH self AS THE DELEGATE
+
+    // REMOVE THESE LINES WHEN YOU HAVE YOUR ANIMATION ADDED WITH self AS THE DELEGATE
 	//[CATransaction begin];
-    // REMOVE THIS LINE TOO
 	//[CATransaction setCompletionBlock:^(void){[self beginSendingImage:[imageBrowseController_ selectedImage]];}];     
     
 	// SB- keep this line
@@ -379,7 +397,6 @@ static ApplicationController*		sharedApplicationController = nil;
 }
 
 
-
 #pragma mark -
 #pragma mark Image Editing
 - (void) beginEditImageWithFilePath:(NSString*)filePath
@@ -395,10 +412,8 @@ static ApplicationController*		sharedApplicationController = nil;
 		// if we have a new file as a result of saving the edits,
 		// add it to our images in the browsers data source
 		[imageBrowseController_ addImageWithPath:filePath selectInBrowser:YES];
-	}
-	
-	// return to browing view
-	
+	}	
+	// return to browing view	
 	[self presentBrowsingView];
 }
 
@@ -411,8 +426,8 @@ static ApplicationController*		sharedApplicationController = nil;
 	[self presentContentViewController:imageEditController_];
 	[imageEditController_.imageView setImageWithURL:imagePathURL];
 	[imageEditController_.imageView zoomImageToFit: self];
-    
 }
+
 
 - (void) presentBrowsingView
 {
