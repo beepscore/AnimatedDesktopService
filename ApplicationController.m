@@ -133,27 +133,15 @@ static ApplicationController*		sharedApplicationController = nil;
     
     // http://www.devonferns.com/cocoablog/?p=3
 
-
     //transitionFilter_ = [CIFilter filterWithName:@"CIPageCurlTransition"];
-    //transitionFilter_ = [CIFilter filterWithName:@"CIRippleTransition"];
     //transitionFilter_ = [CIFilter filterWithName:@"CIDissolveTransition"];
     transitionFilter_ = [CIFilter filterWithName:@"CIRippleTransition"
                                    keysAndValues:nil];
-    [transitionFilter_ retain];    
+    [transitionFilter_ retain];
+    
 	// SET THE FILTER TO ITS DEFAULT PARAMETERS WITH setDefaults
     [transitionFilter_ setDefaults];    
-    transitionFilter_.name = @"transitionFilter_";
     
-    
-    ////
-    [transitionFilter_ setValue:[self restrictedshineImage]
-                         forKey:@"inputShadingImage"];
-    
-    
-    
-    
-    
-
     // SET ANY PARAMETERS FOR WHICH THE DEFAULTS ARE NOT SUFFICIENT
     // REMEMBER : CATransition ANIMATIONS REQUIRE A CORE IMAGE FILTER WITH THE FOLLOWING PARAMETERS:
 	// input keys :
@@ -164,66 +152,14 @@ static ApplicationController*		sharedApplicationController = nil;
 	//    'inputExtent'	
 	// ALL OF THE FILTERS IN THE CATEGORY CICategoryTransition FIT THE REQUIREMENTS
 
-//    NSURL* inputImageUrl;
-//    inputImageUrl = [NSURL fileURLWithPath: [[NSBundle mainBundle]
-//                                             pathForResource: @"baileySit100514"
-//                                             ofType: @"jpg"]];    
-//    CIImage* inputImage = [[CIImage alloc] initWithContentsOfURL: inputImageUrl];
-//    [transitionFilter_ setValue:inputImage forKey:@"inputImage"];
-//    [inputImage release];
-
+    transitionFilter_.name = @"transitionFilter_";
     
-//    NSURL *inputTargetImageUrl;
-//    inputTargetImageUrl = [NSURL fileURLWithPath:[[NSBundle mainBundle] 
-//                                  pathForResource: @"russianRocket"
-//                                  ofType: @"png"]];
-//    CIImage* inputTargetImage = [[CIImage alloc] initWithContentsOfURL: inputTargetImageUrl];
-//    [transitionFilter_ setValue:inputTargetImage forKey:@"inputTargetImage"];
-//    [inputTargetImage release];
+    [transitionFilter_ setValue:[self restrictedshineImage]
+                         forKey:@"inputShadingImage"];
 
     NSLog(@"[transitionFilter_ attributes] = %@", [transitionFilter_ attributes]);
     NSLog(@"[transitionFilter_ inputKeys] = %@", [transitionFilter_ inputKeys]);
-    NSLog(@"[transitionFilter_ valueForKey:@\"inputImage\"] = %@", [transitionFilter_ valueForKey:@"inputImage"]);
     NSLog(@"[transitionFilter_ outputKeys] = %@", [transitionFilter_ outputKeys]);
-
-    
-// 	  NSRect statusBounds = [statusView_ bounds];
-
-// dissolve doesn't use these keys
-//    [transitionFilter_ setValue:[CIVector vectorWithX:statusBounds.origin.x 
-//                                                    Y:statusBounds.origin.y
-//                                                    Z:statusBounds.size.width 
-//                                                    W:statusBounds.size.height]
-//                         forKey:@"inputExtent"];
-//    [transitionFilter_ setValue:[CIVector vectorWithX:(statusBounds.size.width/2.0)
-//                                                    Y:(statusBounds.size.height/2.0)]
-//                         forKey:@"inputCenter"];
-//    
-    
-
-//    CIImage* outputImage = [[CIImage alloc] init];    
-//    [transitionFilter_ setValue:outputImage forKey:@"outputImage"];
-
-    
-/////////////////////////////
-    //    FilePathImageObject* imageObject = [images_ objectAtIndex:selectedImage];
-    //	
-    //	NSImage* image = [[[NSImage alloc] initWithContentsOfFile:imageObject.filePath] autorelease];
-    //    
-    //    NSString* path = [imageBrowseController_ selectedImage];
-    //    CIImage* ciImage = [[CIImage alloc] 
-    //                        initWithContentsOfURL:[NSURL fileURLWithPath:path]];
-/////////////////////////////
-   
-   
-    
-    // ????: render output to a context?????    
-    //CIContext* context;
-    //context = [[NSGraphicsContext currentContext] CIContext];
-
-    // ????: need to apply the filter to a layer?????????????
-    //Add the CATransition to the view's layer?????????????
-    
      
 	// start on the image browsing view
 	[self presentBrowsingView];
@@ -232,6 +168,23 @@ static ApplicationController*		sharedApplicationController = nil;
 	[self presentLogView];
 	
 	[sendingProgress_ setHidden:YES];
+}
+
+
+- (CIImage *)restrictedshineImage
+{
+    if(!restrictedshineImage)
+    {
+        NSURL  *url;
+        url   = [NSURL fileURLWithPath: 
+                 [[NSBundle mainBundle]
+                  pathForResource: @"restrictedshine" 
+                  ofType: @"tiff"]];
+        
+        restrictedshineImage = [[[CIImage alloc] 
+                                 initWithContentsOfURL: url] autorelease];
+    }    
+    return restrictedshineImage;
 }
 
 
@@ -310,10 +263,6 @@ static ApplicationController*		sharedApplicationController = nil;
     // Ref http://stackoverflow.com/questions/2233692/how-does-catransition-work
 
     CATransition *transition = [[CATransition alloc] init];
-    //[[statusView_ layer] addAnimation:transition forKey:nil];
-
-//    CATransition *transition = [CATransition animation];
-//    [transition retain];
 	
 	// SET ANY PARAMETERS ON IT ( TIMING FUNCTION, DURATION )
     [transition setDuration:1.0f];
@@ -352,17 +301,10 @@ static ApplicationController*		sharedApplicationController = nil;
 	// time this view was in the status area	
 	NSRect statusBounds = [statusView_ bounds];
 	[sendingView_ setFrame:statusBounds];
-    
-    
-	// TODO: HW_TODO :
-	
+        
+	// TODO: HW_TODO :	
 	// CREATE THE CATransition ANIMATION
     CATransition *transition = [[CATransition alloc] init];
-    //[[statusView_ layer] addAnimation:transition forKey:nil];
-
-    //    CATransition *transition = [CATransition animation];
-    //    [transition retain];
-
     
 	// SET ANY PARAMETERS ON IT ( TIMING FUNCTION, DURATION )
     [transition setDuration:1.0f];
@@ -377,8 +319,7 @@ static ApplicationController*		sharedApplicationController = nil;
 	// THAT IS CALLED FOR ANIMATION ENDING
     // (SB- animationDidStop:finished:)
     transition.delegate = self;
-    
-	
+
 	// CREATE A DICTIONARY WITH KEY PAIRS. 
 	// KEY == ANIMATION ACITON  ("subviews")
 	// VALUE == THE CATransition ANIMATION YOU WANT TO USE
@@ -386,15 +327,13 @@ static ApplicationController*		sharedApplicationController = nil;
 	// VIEW ARE CHANGED
     NSDictionary* animationDict = [[NSDictionary alloc] 
                                    initWithObjectsAndKeys: transition, @"subviews", nil];    
-    
-	
+
 	// ADD THE ANIMATION DICTONARY TO THE VIEW THAT WILL HAVE ITS SUBVIEWS EXCHANGED
 	// THIS VIEW IS statusView_ AND THE METHOD IS setAnimations:	
     [statusView_ setAnimations:animationDict];
 
 	// finally, swap the subviews. This will animate as long as the 
-	// "subviews" key has an associated animation
-	
+	// "subviews" key has an associated animation	
 	
 	// NOTE : WE WANT TO FIRE OFF SENDING AT THE COMPLETION OF THE IMPLICIT ANIMATION
 	//        UNTIL WE HAVE THE REAL ANIMATION IN PLACE
@@ -415,6 +354,7 @@ static ApplicationController*		sharedApplicationController = nil;
     
     // AND REMOVE THIS LINE
     // [CATransaction commit];
+    
     [animationDict release];
     [transition release];    
 }
@@ -501,27 +441,6 @@ static ApplicationController*		sharedApplicationController = nil;
 		contentView_ = newView;
 	}
 }
-
-
-/////////////
-
-- (CIImage *)restrictedshineImage
-{
-    if(!restrictedshineImage)
-    {
-        NSURL  *url;
-        url   = [NSURL fileURLWithPath: 
-                 [[NSBundle mainBundle]
-                  pathForResource: @"restrictedshine" 
-                  ofType: @"tiff"]];
-        
-        restrictedshineImage = [[[CIImage alloc] 
-                                 initWithContentsOfURL: url] autorelease];
-    }
-    
-    return restrictedshineImage;
-}
-
 
 @end
 
