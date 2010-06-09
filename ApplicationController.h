@@ -76,5 +76,6 @@
 - (void)setupModTransition;
 - (void)setupPageCurlTransition;
 - (void)setupRippleTransition;
+- (CIImage *)ciImageFromNSImage:(NSImage*)nsImage;
 
 @end

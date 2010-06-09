@@ -87,7 +87,7 @@ const CGFloat kTransitionDuration = 2.0;
     
     [filterName release];
     filterName = nil;
-
+    
 	[super dealloc];
 }
 
@@ -137,7 +137,7 @@ const CGFloat kTransitionDuration = 2.0;
     // CREATE THE CIFilter INSTANCE
     // http://developer.apple.com/mac/library/documentation/GraphicsImaging/Reference/CoreImageFilterReference/Reference/reference.html#//apple_ref/doc/uid/TP40004346
     // http://www.devonferns.com/cocoablog/?p=3
-
+    
 	// SET THE FILTER TO ITS DEFAULT PARAMETERS WITH setDefaults
     
     // SET ANY PARAMETERS FOR WHICH THE DEFAULTS ARE NOT SUFFICIENT
@@ -149,7 +149,7 @@ const CGFloat kTransitionDuration = 2.0;
 	// optional input:
 	//    'inputExtent'	
 	// ALL OF THE FILTERS IN THE CATEGORY CICategoryTransition FIT THE REQUIREMENTS
-
+    
     // set up desired filter
     self.filterName = @"CIPageCurlTransition";
     if ([@"CIDissolveTransition" isEqualToString:self.filterName])
@@ -162,11 +162,11 @@ const CGFloat kTransitionDuration = 2.0;
         [self setupPageCurlTransition];
     if ([@"CIRippleTransition" isEqualToString:self.filterName])
         [self setupRippleTransition];
-        
+    
     NSLog(@"[transitionFilter_ attributes] = %@", [transitionFilter_ attributes]);
     NSLog(@"[transitionFilter_ inputKeys] = %@", [transitionFilter_ inputKeys]);
     NSLog(@"[transitionFilter_ outputKeys] = %@", [transitionFilter_ outputKeys]);
-     
+    
 	// start on the image browsing view
 	[self presentBrowsingView];
 	
@@ -217,7 +217,7 @@ const CGFloat kTransitionDuration = 2.0;
                          forKey:@"inputExtent"];
     [transitionFilter_ setValue:[NSNumber numberWithFloat: (0.25 * M_PI)] forKey:@"inputAngle"];
     [transitionFilter_ setValue:[self restrictedshineImage] forKey:@"inputShadingImage"];
-
+    
     CIColor* tempBacksideImageCIColor = [CIColor colorWithRed:0.5 green:0.5 blue:0.5 alpha:1.0];
     CIImage* tempBacksideImage = [CIImage imageWithColor:tempBacksideImageCIColor];    
     [transitionFilter_ setValue:tempBacksideImage forKey:@"inputBacksideImage"];
@@ -250,6 +250,21 @@ const CGFloat kTransitionDuration = 2.0;
     }    
     return restrictedshineImage;
 }
+
+
+- (CIImage *)ciImageFromNSImage:(NSImage*)nsImage
+{
+    // ref http://theocacao.com/document.page/350
+    // ref http://gigliwood.com/weblog/Cocoa/Core_Image__Practic.html
+    // convert NSImage to bitmap
+    NSData  * tiffData = [nsImage TIFFRepresentation];
+    NSBitmapImageRep * bitmap = [NSBitmapImageRep imageRepWithData:tiffData];
+    
+    // create CIImage from bitmap
+    CIImage * ciImage = [[[CIImage alloc] initWithBitmapImageRep:bitmap] autorelease];    
+    return ciImage;
+}
+
 
 
 #pragma mark -
@@ -315,7 +330,7 @@ const CGFloat kTransitionDuration = 2.0;
 	// time this view was in the status area	
 	NSRect statusBounds = [statusView_ bounds];
 	[logView_ setFrame:statusBounds];
-    	
+    
 	// TODO: HW_TODO :	
 	// CREATE THE CATransition ANIMATION
     // this starts an implicit animation
@@ -328,9 +343,10 @@ const CGFloat kTransitionDuration = 2.0;
 	// SET THE FILTER FOR THE CATransition TO THE CIFilter YOU WANT TO USE
     if ([@"CIPageCurlTransition" isEqualToString:self.filterName])
     {
-        CIColor* tempBacksideImageCIColor = [CIColor colorWithRed:0.0 green:0.0 blue:0.5 alpha:1.0];
-        CIImage* tempBacksideImage = [CIImage imageWithColor:tempBacksideImageCIColor];    
-        [transitionFilter_ setValue:tempBacksideImage forKey:@"inputBacksideImage"];        
+        // show the image we are sending on the back side
+        // TODO: scale the image to fit the view
+        CIImage* selectedImageAsCI = [self ciImageFromNSImage:[sendingPreviewImage_ image]];            
+        [transitionFilter_ setValue:selectedImageAsCI forKey:@"inputBacksideImage"];
     }    
     [transition setFilter:transitionFilter_];
     
@@ -341,7 +357,7 @@ const CGFloat kTransitionDuration = 2.0;
 	// VIEW ARE CHANGED
     NSDictionary* animationDict = [[NSDictionary alloc] 
                                    initWithObjectsAndKeys: transition, @"subviews", nil];    
-    	
+    
 	// ADD THE ANIMATION DICTONARY TO THE VIEW THAT WILL HAVE ITS SUBVIEWS EXCHANGED
 	// THIS VIEW IS statusView_ AND THE METHOD IS setAnimations:
     [statusView_ setAnimations:animationDict];
@@ -363,7 +379,7 @@ const CGFloat kTransitionDuration = 2.0;
 	// time this view was in the status area	
 	NSRect statusBounds = [statusView_ bounds];
 	[sendingView_ setFrame:statusBounds];
-        
+    
 	// TODO: HW_TODO :	
 	// CREATE THE CATransition ANIMATION
     CATransition *transition = [[CATransition alloc] init];
@@ -372,8 +388,6 @@ const CGFloat kTransitionDuration = 2.0;
     [transition setDuration:kTransitionDuration];
     
 	// SET THE FILTER FOR THE CATransition TO THE CIFilter YOU WANT TO USE
-
-///////////////////
     if ([@"CIPageCurlTransition" isEqualToString:self.filterName])
     {
         CIColor* tempBacksideImageCIColor = [CIColor colorWithRed:0.5 green:0.0 blue:0.0 alpha:1.0];
@@ -389,7 +403,7 @@ const CGFloat kTransitionDuration = 2.0;
 	// THAT IS CALLED FOR ANIMATION ENDING
     // (SB- animationDidStop:finished:)
     transition.delegate = self;
-
+    
 	// CREATE A DICTIONARY WITH KEY PAIRS. 
 	// KEY == ANIMATION ACITON  ("subviews")
 	// VALUE == THE CATransition ANIMATION YOU WANT TO USE
@@ -397,11 +411,11 @@ const CGFloat kTransitionDuration = 2.0;
 	// VIEW ARE CHANGED
     NSDictionary* animationDict = [[NSDictionary alloc] 
                                    initWithObjectsAndKeys: transition, @"subviews", nil];    
-
+    
 	// ADD THE ANIMATION DICTONARY TO THE VIEW THAT WILL HAVE ITS SUBVIEWS EXCHANGED
 	// THIS VIEW IS statusView_ AND THE METHOD IS setAnimations:	
     [statusView_ setAnimations:animationDict];
-
+    
 	// finally, swap the subviews. This will animate as long as the 
 	// "subviews" key has an associated animation	
 	
@@ -412,7 +426,7 @@ const CGFloat kTransitionDuration = 2.0;
 	//        UNTIL YOU PROVIDE YOUR OWN ANIMATION ABOVE. WHEN YOU SET THE DELEGATE OF THAT
 	//        ANIMATION animationDidStop:finished: WILL BE CALLED WHICH DOES THE SAME
 	//        THING AS THE BLOCK HERE
-
+    
     // REMOVE THESE LINES WHEN YOU HAVE YOUR ANIMATION ADDED WITH self AS THE DELEGATE
 	//[CATransaction begin];
 	//[CATransaction setCompletionBlock:^(void){[self beginSendingImage:[imageBrowseController_ selectedImage]];}];     
