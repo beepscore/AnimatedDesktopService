@@ -151,8 +151,8 @@ const CGFloat kTransitionDuration = 3.0;
     // set up desired filter
     // [self setupDissolveTransition];
     // [self setupFlashTransition];
-    [self setupModTransition];    
-    // [self setupPageCurlTransition];
+    //[self setupModTransition];    
+    [self setupPageCurlTransition];
     // [self setupRippleTransition];
     ////////////////////////////////////
         
@@ -198,11 +198,22 @@ const CGFloat kTransitionDuration = 3.0;
 
 - (void)setupPageCurlTransition
 {
+    // reference http://flylib.com/books.php?ln=en&n=3&p=310&c=55&p1=1&c1=1&c2=100&layout=2&view=1
     transitionFilter_ = [CIFilter filterWithName:@"CIPageCurlTransition"];    
     [transitionFilter_ retain];
-    [transitionFilter_ setDefaults];    
-    [transitionFilter_ setValue:[self restrictedshineImage] forKey:@"inputBacksideImage"];    
+    [transitionFilter_ setDefaults];
+    
+    CIColor* tempBacksideImageCIColor = [CIColor colorWithRed:0.5 green:0.5 blue:0.5 alpha:1.0];
+    CIImage* tempBacksideImage = [CIImage imageWithColor:tempBacksideImageCIColor];    
+    [transitionFilter_ setValue:tempBacksideImage forKey:@"inputBacksideImage"];
+    
     [transitionFilter_ setValue:[self restrictedshineImage] forKey:@"inputShadingImage"];
+    [transitionFilter_ setValue:[CIVector vectorWithX:statusView_.bounds.origin.x 
+                                                    Y:statusView_.bounds.origin.y 
+                                                    Z:statusView_.bounds.size.width 
+                                                    W:statusView_.bounds.size.height] 
+                         forKey:@"inputExtent"];
+    [transitionFilter_ setValue:[NSNumber numberWithFloat: (0.25 * M_PI)] forKey:@"inputAngle"];
 }
 
 
