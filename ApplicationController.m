@@ -308,6 +308,12 @@ const CGFloat kTransitionDuration = 2.0;
 	// but the progress indicator should continue to animate
 	// NOTE: I DO NOT RECOMMEND YOU SHIP A PRODUCT WITH THIS SYNCHRONOUS 
 	//       SENDING. THE BEACH BALL IS BAD!
+    
+    // SB- In HW7 GalleryDesktopService I sent image asynchronously using a background thread.
+    // The following blog post recommends don't use threads to send asynchronously.
+    // "Downloading images for a table without threads"
+    //http://iphonedevelopment.blogspot.com/2010/05/downloading-images-for-table-without.html
+    
 	[imageShareService_ sendImageToClients:image];	
 	
 	// once we return from the synchronous sending, 
