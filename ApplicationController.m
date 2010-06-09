@@ -150,7 +150,8 @@ const CGFloat kTransitionDuration = 3.0;
     ////////////////////////////////////
     // set up desired filter
     // [self setupDissolveTransition];
-    [self setupFlashTransition];
+    // [self setupFlashTransition];
+    [self setupModTransition];    
     // [self setupPageCurlTransition];
     // [self setupRippleTransition];
     ////////////////////////////////////
@@ -184,8 +185,14 @@ const CGFloat kTransitionDuration = 3.0;
     transitionFilter_ = [CIFilter filterWithName:@"CIFlashTransition"];    
     [transitionFilter_ retain];
     [transitionFilter_ setDefaults];        
-    // don't need to set name
-    //[transitionFilter_ setName:@"transitionFilter_"];    
+}
+
+
+- (void)setupModTransition
+{
+    transitionFilter_ = [CIFilter filterWithName:@"CIModTransition"];    
+    [transitionFilter_ retain];
+    [transitionFilter_ setDefaults];        
 }
 
 

@@ -70,6 +70,7 @@
 
 - (void)setupDissolveTransition;
 - (void)setupFlashTransition;
+- (void)setupModTransition;
 - (void)setupPageCurlTransition;
 - (void)setupRippleTransition;
 
