@@ -149,9 +149,10 @@ const CGFloat kTransitionDuration = 3.0;
 
     ////////////////////////////////////
     // set up desired filter
-    //[self setupDissolveTransition];
+    // [self setupDissolveTransition];
+    [self setupFlashTransition];
     // [self setupPageCurlTransition];
-    [self setupRippleTransition];
+    // [self setupRippleTransition];
     ////////////////////////////////////
         
     NSLog(@"[transitionFilter_ attributes] = %@", [transitionFilter_ attributes]);
@@ -171,6 +172,16 @@ const CGFloat kTransitionDuration = 3.0;
 - (void)setupDissolveTransition
 {
     transitionFilter_ = [CIFilter filterWithName:@"CIDissolveTransition"];    
+    [transitionFilter_ retain];
+    [transitionFilter_ setDefaults];        
+    // don't need to set name
+    //[transitionFilter_ setName:@"transitionFilter_"];    
+}
+
+
+- (void)setupFlashTransition
+{
+    transitionFilter_ = [CIFilter filterWithName:@"CIFlashTransition"];    
     [transitionFilter_ retain];
     [transitionFilter_ setDefaults];        
     // don't need to set name
