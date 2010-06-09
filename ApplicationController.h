@@ -32,6 +32,8 @@
 	
 	ImageBrowseViewController*	imageBrowseController_;
 	ImageEditViewController*	imageEditController_;
+    
+    CIImage * restrictedshineImage;
 }
 
 // Status view is a container view that will swap between
@@ -63,5 +65,8 @@
 - (void) finishEditImageWithNewFilePath:(NSString*)filePath;
 
 - (void) sendImage:(NSImage*)image;
+
+- (CIImage *)restrictedshineImage;
+
 
 @end

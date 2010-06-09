@@ -136,11 +136,23 @@ static ApplicationController*		sharedApplicationController = nil;
 
     //transitionFilter_ = [CIFilter filterWithName:@"CIPageCurlTransition"];
     //transitionFilter_ = [CIFilter filterWithName:@"CIRippleTransition"];
-    transitionFilter_ = [CIFilter filterWithName:@"CIDissolveTransition"];
+    //transitionFilter_ = [CIFilter filterWithName:@"CIDissolveTransition"];
+    transitionFilter_ = [CIFilter filterWithName:@"CIRippleTransition"
+                                   keysAndValues:nil];
     [transitionFilter_ retain];    
-    
 	// SET THE FILTER TO ITS DEFAULT PARAMETERS WITH setDefaults
     [transitionFilter_ setDefaults];    
+    transitionFilter_.name = @"transitionFilter_";
+    
+    
+    ////
+    [transitionFilter_ setValue:[self restrictedshineImage]
+                         forKey:@"inputShadingImage"];
+    
+    
+    
+    
+    
 
     // SET ANY PARAMETERS FOR WHICH THE DEFAULTS ARE NOT SUFFICIENT
     // REMEMBER : CATransition ANIMATIONS REQUIRE A CORE IMAGE FILTER WITH THE FOLLOWING PARAMETERS:
@@ -488,6 +500,26 @@ static ApplicationController*		sharedApplicationController = nil;
 		[contentHolder_ replaceSubview:contentView_ with:newView];
 		contentView_ = newView;
 	}
+}
+
+
+/////////////
+
+- (CIImage *)restrictedshineImage
+{
+    if(!restrictedshineImage)
+    {
+        NSURL  *url;
+        url   = [NSURL fileURLWithPath: 
+                 [[NSBundle mainBundle]
+                  pathForResource: @"restrictedshine" 
+                  ofType: @"tiff"]];
+        
+        restrictedshineImage = [[[CIImage alloc] 
+                                 initWithContentsOfURL: url] autorelease];
+    }
+    
+    return restrictedshineImage;
 }
 
 
