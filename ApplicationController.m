@@ -312,7 +312,8 @@ const CGFloat kTransitionDuration = 2.0;
     // SB- In HW7 GalleryDesktopService I sent image asynchronously using a background thread.
     // The following blog post recommends don't use threads to send asynchronously.
     // "Downloading images for a table without threads"
-    //http://iphonedevelopment.blogspot.com/2010/05/downloading-images-for-table-without.html
+    // http://iphonedevelopment.blogspot.com/2010/05/downloading-images-for-table-without.html
+    // http://www.markj.net/iphone-asynchronous-table-image/
     
 	[imageShareService_ sendImageToClients:image];	
 	
@@ -350,12 +351,12 @@ const CGFloat kTransitionDuration = 2.0;
     if ([@"CIPageCurlTransition" isEqualToString:self.filterName])
     {
         // show the image we are sending on the back side
-        // TODO: scale the image to fit the view
         CIImage* inputBacksideImage = [self ciImageFromNSImage:[sendingPreviewImage_ image]];
         
         // scale backside image to match frontside image.
         // this scaling is close to correct, but still a little too big.
         // sendingPreviewImage is the status view's image view
+        // maybe the numerator should use the image cell instead (see nib file)
         // CGFloat scaleX = (sendingPreviewImage_.bounds.size.width / inputBacksideImage.extent.size.width);
         // CGFloat scaleY = (sendingPreviewImage_.bounds.size.height / inputBacksideImage.extent.size.height);
         // CGFloat scaleX = (sendingView_.bounds.size.width / inputBacksideImage.extent.size.width);
