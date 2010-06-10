@@ -351,8 +351,21 @@ const CGFloat kTransitionDuration = 2.0;
     {
         // show the image we are sending on the back side
         // TODO: scale the image to fit the view
-        CIImage* selectedImageAsCI = [self ciImageFromNSImage:[sendingPreviewImage_ image]];            
-        [transitionFilter_ setValue:selectedImageAsCI forKey:@"inputBacksideImage"];
+        CIImage* inputBacksideImage = [self ciImageFromNSImage:[sendingPreviewImage_ image]];
+        
+        // scale backside image to match frontside image.
+        // this scaling is close to correct, but still a little too big.
+        // sendingPreviewImage is the status view's image view
+        // CGFloat scaleX = (sendingPreviewImage_.bounds.size.width / inputBacksideImage.extent.size.width);
+        // CGFloat scaleY = (sendingPreviewImage_.bounds.size.height / inputBacksideImage.extent.size.height);
+        // CGFloat scaleX = (sendingView_.bounds.size.width / inputBacksideImage.extent.size.width);
+        // CGFloat scaleY = (sendingView_.bounds.size.height / inputBacksideImage.extent.size.height);
+        CGFloat scaleX = (statusBounds.size.width / inputBacksideImage.extent.size.width);
+        CGFloat scaleY = (statusBounds.size.height / inputBacksideImage.extent.size.height);
+
+        inputBacksideImage = [inputBacksideImage imageByApplyingTransform:CGAffineTransformMakeScale(scaleX, scaleY)];
+        
+        [transitionFilter_ setValue:inputBacksideImage forKey:@"inputBacksideImage"];
     }    
     [transition setFilter:transitionFilter_];
     
@@ -398,6 +411,7 @@ const CGFloat kTransitionDuration = 2.0;
     {
         CIColor* tempBacksideImageCIColor = [CIColor colorWithRed:0.5 green:0.0 blue:0.0 alpha:1.0];
         CIImage* tempBacksideImage = [CIImage imageWithColor:tempBacksideImageCIColor];    
+    
         [transitionFilter_ setValue:tempBacksideImage forKey:@"inputBacksideImage"];        
     }
     [transition setFilter:transitionFilter_];
