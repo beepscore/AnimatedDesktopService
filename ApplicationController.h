@@ -5,16 +5,20 @@
 //	HW9
 //
 //  Copyright 2010 Chris Parrish
+//  portions Copyright Beepscore LLC 2010. All rights reserved.
 //
-//  App controller is a singleton object
+//  sharedApplicationController is a singleton object
 
 #import <Cocoa/Cocoa.h>
 
-@class ImageShareService;
+// import ImageShareService.h to see the ImageShareServiceProtocol declaration
+#import "ImageShareService.h"
+
 @class ImageBrowseViewController;
 @class ImageEditViewController;
 
-@interface ApplicationController : NSObject
+// declare ApplicationController implements ImageShareServiceProtocol
+@interface ApplicationController : NSObject  <ImageShareServiceProtocol>
 {
 	ImageShareService*			imageShareService_;
 	
@@ -36,6 +40,8 @@
     CIImage * restrictedshineImage;
     NSString* filterName;
 }
+// Apple recommends on Mac assign IBOutlet, on iPhone retain IBOutlet
+// applies only to nib top-level objects?
 
 // Status view is a container view that will swap between
 // showing either the log view or the sending view

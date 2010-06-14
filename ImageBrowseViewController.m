@@ -75,8 +75,7 @@
 
 - (void) updateSendButtonState
 {
-	// Enable or disable the send button based on the selection. If there is no selection disale the button
-	
+	// Enable or disable the send button based on the selection. If there is no selection disale the button	
 	BOOL enabled = [[imageBrowser_ selectionIndexes] count] > 0;
 	[sendButton_ setEnabled:enabled];
 }
@@ -221,10 +220,8 @@
 
 #pragma mark -
 #pragma mark IKImageBrowserDataSource
-
-/* implement image-browser's datasource protocol 
- Our datasource representation is a simple mutable array
- */
+// Implement IKImageBrowserView's informal protocol IKImageBrowserDataSource
+// Our datasource representation is a simple mutable array
 
 - (NSUInteger) numberOfItemsInImageBrowser:(IKImageBrowserView *) view
 {
@@ -278,7 +275,7 @@
 
 #pragma mark -
 #pragma mark IKImageBrowserDelegate
-
+// Implement IKImageBrowserView's informal protocol IKImageBrowserDelegate
 - (void) imageBrowser:(IKImageBrowserView *) aBrowser cellWasDoubleClickedAtIndex:(NSUInteger) index
 {
 	// double click is starts an edit on the image selected
@@ -298,7 +295,7 @@
 
 #pragma mark -
 #pragma mark  Drag and Drop
-
+// Conform to NSDraggingDestination informal protocol
 - (NSDragOperation)draggingEntered:(id <NSDraggingInfo>)sender
 {
 	return [self draggingUpdated:sender];
@@ -342,8 +339,6 @@
 	
 	return YES;
 }
-
-
 
 @end
 

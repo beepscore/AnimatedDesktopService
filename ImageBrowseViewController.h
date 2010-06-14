@@ -6,6 +6,8 @@
 //
 //  Copyright 2010 Chris Parrish
 //
+//  This class conforms to two IKImageBrowserView informal protocols: 
+//  IKImageBrowserDataSource and IKImageBrowserDelegate.
 #import <Cocoa/Cocoa.h>
 
 @class IKImageBrowserView;

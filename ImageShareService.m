@@ -21,6 +21,10 @@ NSString* const			kServiceTypeString		= @"_uwcelistener._tcp.";
 NSString* const			kServiceNameString		= @"Images";
 const	int				kListenPort				= 8082;
 
+NSString* const kConnectionKey = @"connectionKey";
+NSString* const kImageSizeKey = @"imageSize";
+NSString* const kRepresentationToSendKey = @"representationToSend";
+
 @interface ImageShareService ()
 
 - (void) parseDataRecieved:(NSMutableData*)dataSoFar;
@@ -31,6 +35,9 @@ const	int				kListenPort				= 8082;
 @end
 
 @implementation ImageShareService
+
+#pragma mark properties
+@synthesize delegate;
 
 - (id) init
 {
@@ -59,6 +66,9 @@ const	int				kListenPort				= 8082;
 	
 	[connectedFileHandles_ release];
 	connectedFileHandles_ = nil;
+    
+    // a delegator doesn't retain it's delegate, and so it doesn't release it
+    delegate = nil;
 	
 	[super dealloc];
 }
@@ -302,6 +312,51 @@ const	int				kListenPort				= 8082;
 
 #pragma mark -
 #pragma mark Sending
+- (void)sendWithDictionary:(NSMutableDictionary*)sendArgumentsDictionary
+{
+    // Add autorelease pool.
+    // Without autorelease pool, if iPhone client quits during send, console logs
+    // "_NSCallStackArray autoreleased with no pool in place - just leaking"
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+    
+    // sendWithDictionary: has one parameter, a dictionary.
+    // This way, sendWithDictionary: can be called from performSelectorInBackground:withObject:    
+    // The dictionary object contains multiple objects as "arguments" for use by the method
+    NSFileHandle* connection = [sendArgumentsDictionary objectForKey:kConnectionKey];
+    NSData* imageSize = [sendArgumentsDictionary objectForKey:kImageSizeKey];
+    NSData* representationToSend = [sendArgumentsDictionary objectForKey:kRepresentationToSendKey];    
+    
+    // suggestion from Sean Quinlan
+    // if we lose a connection and have a "bad socket", these catch blocks around writeData
+    // allows the server to write to other valid connections.
+    @try {
+        [connection writeData:imageSize];
+    }
+    // @catch could return type NSException* instead of type id
+    @catch (id e) {
+        // log error
+        NSLog(@"Error in sendWithDictionary: sending image size.");
+    }    
+    
+    @try {
+        [connection writeData:representationToSend];
+    }
+    @catch (id e) {
+        // log error
+        NSLog(@"Error in sendWithDictionary: sending image.");
+    }    
+    
+    // Notify delegate the send is complete
+    // The delegate controls the view.
+    // View related methods are not thread safe and must be performed on the main thread.
+    [self.delegate performSelectorOnMainThread:@selector(imageShareServiceDidSend:)
+                                    withObject:self
+                                 waitUntilDone:NO];
+    
+    // http://developer.apple.com/mac/library/documentation/Cocoa/Reference/Foundation/Classes/NSAutoreleasePool_Class/Reference/Reference.html#//apple_ref/occ/instm/NSAutoreleasePool/drain
+    [pool drain];
+}
+
 
 - (void) sendImageToClients:(NSImage*)image
 {
@@ -331,30 +386,37 @@ const	int				kListenPort				= 8082;
 	
 	
 	NSUInteger imageDataSize = [representationToSend length];
-	
+    
+    // the length method returns an NSUInteger, which happens to be 64 bits 
+	// or 8 bytes in length on the desktop. On the phone NSUInteger is 32 bits
+	// we are simply going to not send anything that is so big that it
+	// length is > 2^32, which should be fine considering the iPhone client
+	// could not handle images that large anyway    
 	if ( imageDataSize > UINT32_MAX )
 	{
 		[appController_ appendStringToLog:[NSString stringWithFormat:@"Image is too large to send (%ld bytes", imageDataSize]];	
 		return;
 	}
-	uint32 dataLength = htonl( (uint32)imageDataSize );
+	
+    // We also have to be careful and make sure that the bytes are in the proper order
+	// when sent over the network using htonl()
+    uint32 dataLength = htonl( (uint32)imageDataSize );
 	NSData*	imageSize = [NSData dataWithBytes:&dataLength length:sizeof(unsigned int)];
 
-	// the length method returns an NSUInteger, which happens to be 64 bits 
-	// or 8 bytes in length on the desktop. On the phone NSUInteger is 32 bits
-	// we are simply going to not send anything that is so big that it
-	// length is > 2^32, which should be fine considering the iPhone client
-	// could not handle images that large anyway
-	// We also have to be careful and make sure that the bytes are in the proper order
-	// when sent over the network using htonl()
-	
-	
 	for ( NSFileHandle* connection in connectedFileHandles_)
 	{
-		// First write out the size of the image data we are sending
-		// Then send the image
-		[connection writeData:imageSize];
-		[connection writeData:representationToSend];
+        // make a dictionary for sendWithDictionary:
+        NSMutableDictionary* sendArgumentsDictionary =
+        [[NSMutableDictionary alloc] initWithObjectsAndKeys:connection, kConnectionKey,
+         imageSize, kImageSizeKey,
+         representationToSend, kRepresentationToSendKey, nil];
+        
+        // send asynchronously to avoid locking up UI
+        // Thanks to suggestions from Greg Anderson and Pam DeBriere
+        // including using performSelectorInBackground:withObject: to create a new thread
+        [self performSelectorInBackground:@selector(sendWithDictionary:) 
+                               withObject:sendArgumentsDictionary];
+        [sendArgumentsDictionary release];        
 	}
 	
 	

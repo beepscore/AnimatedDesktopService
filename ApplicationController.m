@@ -4,18 +4,21 @@
 //  ApplicationController.m
 //	HW9
 //
-//  Copyright 2010 Chris Parrish
+//  portions Copyright 2010 Chris Parrish
+//  portions Copyright Beepscore LLC 2010. All rights reserved.
 //
 //  Reference: ViewTransitionsAppDelegate
 
 #import "ApplicationController.h"
-#import "ImageShareService.h"
 #import "ImageBrowseViewController.h"
 #import "ImageEditViewController.h"
 
 #pragma mark Static
 static ApplicationController*		sharedApplicationController = nil;
 
+// declare anonymous category for "private" methods, avoid showing in .h file
+// Note in Objective C no method is private, it can be called from elsewhere.
+// Ref http://stackoverflow.com/questions/1052233/iphone-obj-c-anonymous-category-or-private-category
 @interface ApplicationController ()
 
 - (void) presentContentViewController:(NSViewController*)controller;
@@ -266,7 +269,6 @@ const CGFloat kTransitionDuration = 2.0;
 }
 
 
-
 #pragma mark -
 #pragma mark Service
 
@@ -280,6 +282,7 @@ const CGFloat kTransitionDuration = 2.0;
 - (void) startService
 {
 	imageShareService_ = [[ImageShareService alloc] init];
+    [imageShareService_ setDelegate:self];
 	[imageShareService_ startService];
 	[imageShareService_ publishService];
 }
@@ -304,25 +307,18 @@ const CGFloat kTransitionDuration = 2.0;
 	[sendingProgress_ setHidden:NO];
 	[sendingProgress_ startAnimation:self];
 	
-	// Because the send is not asynchronous, we block here until the send is finished
-	// but the progress indicator should continue to animate
-	// NOTE: I DO NOT RECOMMEND YOU SHIP A PRODUCT WITH THIS SYNCHRONOUS 
-	//       SENDING. THE BEACH BALL IS BAD!
-    
-    // SB- In HW7 GalleryDesktopService I sent image asynchronously using a background thread.
-    // The following blog post recommends don't use threads to send asynchronously.
+	// If the send were asynchronous, we would block here until the send is finished    
+    // Send image asynchronously using a background thread, as in HW7 GalleryDesktopService.
+    // The following blog posts recommend don't use threads to download asynchronously on iPhone.
     // "Downloading images for a table without threads"
     // http://iphonedevelopment.blogspot.com/2010/05/downloading-images-for-table-without.html
     // http://www.markj.net/iphone-asynchronous-table-image/
+    // I looked for asynchronous NSFileHandle asynchronous write methods and didn't see any.
+    // So use thread until we find a better way.
     
 	[imageShareService_ sendImageToClients:image];	
-	
-	// once we return from the synchronous sending, 
-	// stop the progress indicator and hide it
-	[sendingProgress_ stopAnimation:self];
-	[sendingProgress_ setHidden:YES];	
-	
-	// finally go back to the log view
+		
+	// go back to the log view
 	[self presentLogView];
 }
 
@@ -540,6 +536,18 @@ const CGFloat kTransitionDuration = 2.0;
 		[contentHolder_ replaceSubview:contentView_ with:newView];
 		contentView_ = newView;
 	}
+}
+
+#pragma mark -
+#pragma mark ImageShareServiceDelegate
+// Implement ImageShareService's formal protocol ImageShareServiceDelegate
+// when the asynchronous send completes, imageShareService calls back to its delegate
+- (void)imageShareServiceDidSend:(ImageShareService*)imageShareService
+{
+	// once we return from the synchronous sending, 
+	// stop the progress indicator and hide it
+	[sendingProgress_ stopAnimation:self];
+	[sendingProgress_ setHidden:YES];	
 }
 
 @end
