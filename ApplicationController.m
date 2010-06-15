@@ -16,7 +16,7 @@
 #pragma mark Static
 static ApplicationController*		sharedApplicationController = nil;
 
-// declare anonymous category for "private" methods, avoid showing in .h file
+// declare class extension (anonymous category) for "private" methods, avoid showing in .h file
 // Note in Objective C no method is private, it can be called from elsewhere.
 // Ref http://stackoverflow.com/questions/1052233/iphone-obj-c-anonymous-category-or-private-category
 @interface ApplicationController ()
@@ -32,7 +32,7 @@ static ApplicationController*		sharedApplicationController = nil;
 
 @implementation ApplicationController
 
-const CGFloat kTransitionDuration = 2.0;
+const CGFloat kTransitionDuration = 1.0;
 
 @synthesize contentHolder = contentHolder_;
 @synthesize statusView = statusView_;
@@ -176,7 +176,7 @@ const CGFloat kTransitionDuration = 2.0;
 	// start on with log view shown
 	[self presentLogView];
 	
-	[sendingProgress_ setHidden:YES];
+	[self.sendingProgress setHidden:YES];
 }
 
 
@@ -304,18 +304,11 @@ const CGFloat kTransitionDuration = 2.0;
 	// NOTE : I found that the bar style progress inidcator
 	//        would not animate when it used a layer backed view required for 
 	//        core animation. Only the spinning indicator seems to work here	
-	[sendingProgress_ setHidden:NO];
-	[sendingProgress_ startAnimation:self];
+	[self.sendingProgress setHidden:NO];
+	[self.sendingProgress startAnimation:self];
 	
-	// If the send were asynchronous, we would block here until the send is finished    
-    // Send image asynchronously using a background thread, as in HW7 GalleryDesktopService.
-    // The following blog posts recommend don't use threads to download asynchronously on iPhone.
-    // "Downloading images for a table without threads"
-    // http://iphonedevelopment.blogspot.com/2010/05/downloading-images-for-table-without.html
-    // http://www.markj.net/iphone-asynchronous-table-image/
-    // I looked for asynchronous NSFileHandle asynchronous write methods and didn't see any.
-    // So use thread until we find a better way.
-    
+    // This method sends asynchronously.
+    // If the send were synchronous, we would block here until the send finished.   
 	[imageShareService_ sendImageToClients:image];	
 		
 	// go back to the log view
@@ -463,7 +456,7 @@ const CGFloat kTransitionDuration = 2.0;
 {
 	// this is called when our animation has finished. In this case we know 
 	// that this is the end of presentation of the sending view image, 
-	// so we will no fire off the actual send. 
+	// so we will now fire off the actual send. 
 	
 	// In this particular case the delegate is called twice, once with finsihed 
 	// false and once later with it true. We only want to react when flag
@@ -546,8 +539,8 @@ const CGFloat kTransitionDuration = 2.0;
 {
 	// once we return from the synchronous sending, 
 	// stop the progress indicator and hide it
-	[sendingProgress_ stopAnimation:self];
-	[sendingProgress_ setHidden:YES];	
+	[self.sendingProgress stopAnimation:self];
+	[self.sendingProgress setHidden:YES];	
 }
 
 @end

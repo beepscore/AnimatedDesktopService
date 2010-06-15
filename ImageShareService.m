@@ -25,12 +25,15 @@ NSString* const kConnectionKey = @"connectionKey";
 NSString* const kImageSizeKey = @"imageSize";
 NSString* const kRepresentationToSendKey = @"representationToSend";
 
+// declare class extension (anonymous category) for "private" methods, avoid showing in .h file
+// Note in Objective C no method is private, it can be called from elsewhere.
+// Ref http://stackoverflow.com/questions/1052233/iphone-obj-c-anonymous-category-or-private-category
 @interface ImageShareService ()
 
 - (void) parseDataRecieved:(NSMutableData*)dataSoFar;
 - (NSMutableData*) dataForFileHandle:(NSFileHandle*) fileHandle;
 - (void) handleMessage:(NSString*)messageString;
-
+- (void)sendWithDictionary:(NSMutableDictionary*)sendArgumentsDictionary;
 
 @end
 
@@ -76,15 +79,15 @@ NSString* const kRepresentationToSendKey = @"representationToSend";
 - (BOOL) startService
 {
 	socket_ = CFSocketCreate
-		(
-			kCFAllocatorDefault,
-			PF_INET,
-			SOCK_STREAM,
-			IPPROTO_TCP,
-			0,
-			NULL,
-			NULL
-		 );
+    (
+     kCFAllocatorDefault,
+     PF_INET,
+     SOCK_STREAM,
+     IPPROTO_TCP,
+     0,
+     NULL,
+     NULL
+     );
 	
 	// Create a network socket for streaming TCP
 	
@@ -102,11 +105,11 @@ NSString* const kRepresentationToSendKey = @"representationToSend";
 	// when restartnig and debugging
 	
 	int result = setsockopt(
-								fileDescriptor,
-								SOL_SOCKET,
-								SO_REUSEADDR,
-								(void *)&reuse,
-								sizeof(int)
+                            fileDescriptor,
+                            SOL_SOCKET,
+                            SO_REUSEADDR,
+                            (void *)&reuse,
+                            sizeof(int)
 							);
 	
 	
@@ -149,10 +152,10 @@ NSString* const kRepresentationToSendKey = @"representationToSend";
 	connectionFileHandle_ = [[NSFileHandle alloc] initWithFileDescriptor:fileDescriptor closeOnDealloc:YES];
 	
 	[[NSNotificationCenter defaultCenter]
-		addObserver:self
-		selector:@selector(handleIncomingConnection:) 
-	        name:NSFileHandleConnectionAcceptedNotification
-		  object:nil];
+     addObserver:self
+     selector:@selector(handleIncomingConnection:) 
+     name:NSFileHandleConnectionAcceptedNotification
+     object:nil];
 	
 	[connectionFileHandle_ acceptConnectionInBackgroundAndNotify];
 	
@@ -171,9 +174,9 @@ NSString* const kRepresentationToSendKey = @"representationToSend";
 	CFRelease(computerName);
 	
 	NSNetService* netService = [[NSNetService alloc] initWithDomain:@"" 
-												 type:kServiceTypeString
-												 name:serviceNameString 
-												 port:kListenPort];
+                                                               type:kServiceTypeString
+                                                               name:serviceNameString 
+                                                               port:kListenPort];
 	// publish on the default domains
 	
     [netService setDelegate:self];
@@ -304,9 +307,9 @@ NSString* const kRepresentationToSendKey = @"representationToSend";
 	}
 	
 	[[NSNotificationCenter defaultCenter] 
-		removeObserver:self
-	              name:NSFileHandleDataAvailableNotification
-	            object:fileHandle];
+     removeObserver:self
+     name:NSFileHandleDataAvailableNotification
+     object:fileHandle];
 }
 
 
@@ -360,6 +363,18 @@ NSString* const kRepresentationToSendKey = @"representationToSend";
 
 - (void) sendImageToClients:(NSImage*)image
 {
+    // This method sends asynchronously.
+    // If the send were synchronous, we would block here until the send finished.   
+    // Call performSelectorInBackground:... to start a background thread as in HW7 GalleryDesktopService.
+    // Alternatively could implement threading via low-level socket based code.
+    // We can't use NSFileHandle.  It supports asynchronous read but not asynchronous write.
+    
+    // The following blog posts recommend use NSFileHandle methods to asynchronous read on iPhone.
+    // "Downloading images for a table without threads"
+    // http://iphonedevelopment.blogspot.com/2010/05/downloading-images-for-table-without.html
+    // http://www.markj.net/iphone-asynchronous-table-image/
+    /////////////////////////////////////////////////////////////////
+    
 	NSUInteger clientCount = [connectedFileHandles_ count];
 	
 	if( clientCount <= 0 )
@@ -367,10 +382,10 @@ NSString* const kRepresentationToSendKey = @"representationToSend";
 		[appController_ appendStringToLog:@"No clients connected, not sending"];		
 		return;
 	}
-
+    
 	NSBitmapImageRep* imageRep = [[image representations] objectAtIndex:0];	
 	NSData* representationToSend = [imageRep representationUsingType:NSPNGFileType properties:nil];
-		
+    
 	// NOTE : this will only work when the image has a bitmap representation of some type
 	// an EPS or PDF for instance do not and in that case imageRep will not be a NSBitmapImageRep
 	// and then representationUsingType will fail
@@ -379,11 +394,9 @@ NSString* const kRepresentationToSendKey = @"representationToSend";
 	// There are some downsides to this though, because for instance a jpeg will recompress
 	// so you would want to use a rep when you have it and if not, create one. 
 	
-
 	// The first thing we send is 4 bytes that represent the length of
 	// of the image so that the client will know when a full image has 
-	// transfered
-	
+	// transfered	
 	
 	NSUInteger imageDataSize = [representationToSend length];
     
@@ -402,7 +415,7 @@ NSString* const kRepresentationToSendKey = @"representationToSend";
 	// when sent over the network using htonl()
     uint32 dataLength = htonl( (uint32)imageDataSize );
 	NSData*	imageSize = [NSData dataWithBytes:&dataLength length:sizeof(unsigned int)];
-
+    
 	for ( NSFileHandle* connection in connectedFileHandles_)
 	{
         // make a dictionary for sendWithDictionary:
@@ -418,12 +431,7 @@ NSString* const kRepresentationToSendKey = @"representationToSend";
                                withObject:sendArgumentsDictionary];
         [sendArgumentsDictionary release];        
 	}
-	
-	
-	[appController_ appendStringToLog:[NSString stringWithFormat:@"Sent image to %d clients", clientCount]];
-	
+	[appController_ appendStringToLog:[NSString stringWithFormat:@"Sent image to %d clients", clientCount]];	
 }
-
-
 
 @end

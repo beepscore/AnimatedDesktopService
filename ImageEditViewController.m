@@ -108,8 +108,7 @@
 }
 
 -(IBAction)doFinsihedEditingAction:(id)sender
-{
-	
+{	
 	// right now, this code always assumes that the image needs to be saved
 	// what would be nice is to note if there have been no edits
 	// and then only bring this alert up if the image is 'dirty'
@@ -125,8 +124,6 @@
 					  modalDelegate:self
 					  didEndSelector:@selector(saveImageSheetDidEnd:returnCode:contextInfo:)
 						contextInfo:nil];
-	
-
 }
 
 
